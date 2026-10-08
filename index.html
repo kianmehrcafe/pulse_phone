@@ -2,670 +2,645 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>PulsePhone</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:Arial,sans-serif;
+  background:#090b10;
+  color:#fff;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+
+.phone{
+  width:390px;
+  height:820px;
+  max-width:100vw;
+  max-height:100vh;
+  background:#10131b;
+  border:9px solid #242631;
+  border-radius:42px;
+  overflow:hidden;
+  position:relative;
+  box-shadow:0 20px 70px #000;
 }
 
-body {
-  font-family: Arial, sans-serif;
-  background: #111;
-  color: white;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-button,
-input,
-textarea {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-.phone {
-  width: 390px;
-  height: 820px;
-  max-width: 100vw;
-  max-height: 100vh;
-  background: #111;
-  border: 10px solid #222;
-  border-radius: 42px;
-  overflow: hidden;
-  position: relative;
-  box-shadow: 0 0 50px #000;
-}
-
-.phone.iphone {
-  border-radius: 48px;
-}
-
-.phone.samsung {
-  border-radius: 30px;
-}
-
-.phone.pixel {
-  border-radius: 36px;
-}
-
-.phone.nothing {
-  border-radius: 34px;
-}
-
-.phone.pulse {
-  border-radius: 42px;
-}
-
-.screen {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  overflow: hidden;
+.screen{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  position:relative;
   background:
-    radial-gradient(circle at 20% 20%, rgba(120,80,255,.35), transparent 30%),
-    radial-gradient(circle at 80% 80%, rgba(0,200,255,.25), transparent 30%),
-    #10131c;
-}
-
-.status {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 32px;
-  z-index: 100;
-  display: flex;
-  justify-content: space-between;
-  padding: 9px 18px 0;
-  font-size: 12px;
-  pointer-events: none;
-}
-
-.dynamic-island {
-  position: absolute;
-  top: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 105px;
-  height: 25px;
-  background: #000;
-  border-radius: 20px;
-  z-index: 110;
-}
-
-.home {
-  width: 100%;
-  height: 100%;
-  padding: 60px 18px 75px;
-  overflow-y: auto;
-}
-
-.home::-webkit-scrollbar {
-  display: none;
-}
-
-.clock {
-  text-align: center;
-  font-size: 52px;
-  font-weight: 200;
-  margin: 20px 0 5px;
-}
-
-.date {
-  text-align: center;
-  opacity: .7;
-  margin-bottom: 25px;
-}
-
-.app-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 18px 10px;
-}
-
-.app {
-  text-align: center;
-  border: 0;
-  background: transparent;
-  color: white;
-}
-
-.app-icon {
-  width: 62px;
-  height: 62px;
-  margin: auto;
-  border-radius: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  background: linear-gradient(145deg, #292d3a, #171a22);
-  box-shadow: 0 7px 15px rgba(0,0,0,.3);
-}
-
-.app-name {
-  font-size: 11px;
-  margin-top: 6px;
-}
-
-.dock {
-  position: absolute;
-  bottom: 12px;
-  left: 12px;
-  right: 12px;
-  height: 70px;
-  border-radius: 25px;
-  background: rgba(255,255,255,.13);
-  backdrop-filter: blur(20px);
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  z-index: 50;
-}
-
-.dock button {
-  background: transparent;
-  border: 0;
-  font-size: 27px;
-}
-
-.page {
-  display: none;
-  position: absolute;
-  inset: 0;
-  padding-top: 35px;
-  background: #10131c;
-  z-index: 80;
-}
-
-.page.active {
-  display: block;
-}
-
-.page-header {
-  height: 55px;
-  display: flex;
-  align-items: center;
-  padding: 0 15px;
-  gap: 12px;
-  border-bottom: 1px solid rgba(255,255,255,.1);
-}
-
-.back {
-  border: 0;
-  background: transparent;
-  color: white;
-  font-size: 28px;
-}
-
-.page-title {
-  font-size: 21px;
-  font-weight: bold;
-}
-
-.content {
-  height: calc(100% - 55px);
-  overflow-y: auto;
-  padding: 15px;
-}
-
-.content::-webkit-scrollbar {
-  width: 4px;
-}
-
-input,
-textarea,
-select {
-  width: 100%;
-  background: #202532;
-  color: white;
-  border: 1px solid #3a4050;
-  border-radius: 13px;
-  padding: 13px;
-  outline: none;
-  margin-bottom: 12px;
-}
-
-.primary {
-  width: 100%;
-  border: 0;
-  border-radius: 14px;
-  padding: 13px;
-  background: #6c63ff;
-  color: white;
-  font-weight: bold;
-}
-
-.secondary {
-  border: 0;
-  border-radius: 12px;
-  padding: 10px 14px;
-  background: #292e3b;
-  color: white;
-}
-
-.section {
-  background: #191e29;
-  padding: 15px;
-  border-radius: 17px;
-  margin-bottom: 13px;
-}
-
-.section h3 {
-  margin-bottom: 10px;
-}
-
-.calc-display {
-  width: 100%;
-  min-height: 80px;
-  background: #090a0e;
-  border-radius: 15px;
-  margin-bottom: 10px;
-  padding: 15px;
-  font-size: 30px;
-  text-align: right;
-  overflow: hidden;
-}
-
-.calc-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-}
-
-.calc-grid button {
-  height: 58px;
-  border: 0;
-  border-radius: 15px;
-  background: #252a36;
-  color: white;
-  font-size: 20px;
-}
-
-.calc-grid button.operator {
-  background: #6c63ff;
-}
-
-.call-number {
-  font-size: 35px;
-  text-align: center;
-  margin: 30px 0;
-}
-
-.call-pad {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-
-.call-pad button {
-  height: 65px;
-  border-radius: 50%;
-  border: 0;
-  background: #252a36;
-  color: white;
-  font-size: 22px;
-}
-
-.call-btn {
-  background: #32d74b !important;
-}
-
-.google-box {
-  display: flex;
-  gap: 8px;
-}
-
-.google-box input {
-  margin: 0;
-}
-
-.google-box button {
-  width: 60px;
-}
-
-.tube {
-  position: absolute;
-  inset: 0;
-  background: #000;
-}
-
-.tube-feed {
-  height: 100%;
-  overflow-y: auto;
-  scroll-snap-type: y mandatory;
-}
-
-.tube-feed::-webkit-scrollbar {
-  display: none;
-}
-
-.video-card {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  scroll-snap-align: start;
-  background: #050505;
-  overflow: hidden;
-}
-
-.video-card video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.video-overlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.video-bottom {
-  position: absolute;
-  left: 14px;
-  right: 75px;
-  bottom: 25px;
-  pointer-events: auto;
-}
-
-.video-user {
-  font-weight: bold;
-  margin-bottom: 8px;
-}
-
-.video-caption {
-  font-size: 14px;
-  opacity: .95;
-}
-
-.video-actions {
-  position: absolute;
-  right: 12px;
-  bottom: 30px;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  align-items: center;
-  pointer-events: auto;
-}
-
-.video-actions button {
-  width: 48px;
-  height: 48px;
-  border: 0;
-  border-radius: 50%;
-  background: rgba(0,0,0,.45);
-  color: white;
-  font-size: 21px;
-}
-
-.like-count {
-  font-size: 11px;
-}
-
-.tube-top {
-  position: absolute;
-  top: 40px;
-  left: 15px;
-  right: 15px;
-  z-index: 10;
-  display: flex;
-  justify-content: space-between;
-}
-
-.tube-top button {
-  background: rgba(0,0,0,.45);
-  color: white;
-  border: 0;
-  padding: 9px 13px;
-  border-radius: 20px;
-}
-
-.empty-feed {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 30px;
-  color: #aaa;
-}
-
-.upload-box {
-  border: 2px dashed #454b5c;
-  border-radius: 18px;
-  padding: 25px;
-  text-align: center;
-  margin-bottom: 15px;
-}
-
-#cameraPreview {
-  width: 100%;
-  border-radius: 17px;
-  display: none;
-  background: black;
-}
-
-.recording {
-  background: #ff3b30 !important;
-}
-
-.comments {
-  position: absolute;
-  inset: auto 0 0;
-  max-height: 55%;
-  background: rgba(15,17,23,.97);
-  border-radius: 25px 25px 0 0;
-  z-index: 100;
-  padding: 15px;
-  display: none;
-  flex-direction: column;
-}
-
-.comments.show {
-  display: flex;
-}
-
-.comment-list {
-  overflow-y: auto;
-  flex: 1;
-  margin: 10px 0;
-}
-
-.comment {
-  padding: 8px 0;
-  border-bottom: 1px solid #303542;
-  font-size: 13px;
-}
-
-.comment-form {
-  display: flex;
-  gap: 7px;
-}
-
-.comment-form input {
-  margin: 0;
-}
-
-.settings-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #191e29;
-  padding: 14px;
-  border-radius: 15px;
-  margin-bottom: 10px;
-}
-
-.switch {
-  width: 48px;
-  height: 28px;
-  border-radius: 20px;
-  background: #444;
-  position: relative;
-}
-
-.switch.on {
-  background: #6c63ff;
-}
-
-.switch::after {
-  content: "";
-  position: absolute;
-  width: 22px;
-  height: 22px;
-  background: white;
-  border-radius: 50%;
-  top: 3px;
-  left: 3px;
-  transition: .2s;
-}
-
-.switch.on::after {
-  left: 23px;
-}
-
-.game-card {
-  background: #1b202c;
-  border-radius: 18px;
-  padding: 16px;
-  margin-bottom: 12px;
-}
-
-.game-card button {
-  margin-top: 10px;
-}
-
-#gameCanvas {
-  width: 100%;
-  background: linear-gradient(#10192c, #20283b);
-  border-radius: 18px;
-  display: block;
-}
-
-.notepad {
-  height: 500px;
-  resize: none;
-}
-
-.setup {
-  position: absolute;
-  inset: 0;
-  z-index: 500;
+    radial-gradient(circle at 20% 15%,#675cff35,transparent 30%),
+    radial-gradient(circle at 85% 80%,#00d5ff20,transparent 32%),
+    #10131b;
+}
+
+.status{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:32px;
+  z-index:999;
+  display:flex;
+  justify-content:space-between;
+  padding:8px 16px 0;
+  font-size:12px;
+  pointer-events:none;
+}
+
+.dynamic-island{
+  position:absolute;
+  top:6px;
+  left:50%;
+  transform:translateX(-50%);
+  width:105px;
+  height:25px;
+  background:#000;
+  border-radius:20px;
+  z-index:1000;
+}
+
+.home{
+  width:100%;
+  height:100%;
+  overflow-y:auto;
+  padding:54px 17px 82px;
+}
+.home::-webkit-scrollbar{display:none}
+
+.clock{
+  text-align:center;
+  font-size:49px;
+  font-weight:200;
+  margin-top:20px;
+  animation:softFloat 4s ease-in-out infinite;
+}
+.date{
+  text-align:center;
+  opacity:.65;
+  margin:3px 0 27px;
+}
+
+.app-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:18px 7px;
+}
+
+.app{
+  border:0;
+  background:transparent;
+  color:#fff;
+  text-align:center;
+  transition:.18s;
+}
+.app:hover{transform:translateY(-5px) scale(1.04)}
+.app:active{transform:scale(.92)}
+
+.app-icon{
+  width:62px;
+  height:62px;
+  margin:auto;
+  border-radius:19px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:28px;
+  background:linear-gradient(145deg,#303645,#171a23);
+  box-shadow:0 9px 18px #0005;
+  animation:iconBob 5s ease-in-out infinite;
+}
+.app:nth-child(2) .app-icon{animation-delay:.2s}
+.app:nth-child(3) .app-icon{animation-delay:.4s}
+.app:nth-child(4) .app-icon{animation-delay:.6s}
+.app:nth-child(5) .app-icon{animation-delay:.8s}
+.app:nth-child(6) .app-icon{animation-delay:1s}
+
+.app-name{
+  margin-top:6px;
+  font-size:11px;
+}
+
+.dock{
+  position:absolute;
+  left:12px;
+  right:12px;
+  bottom:11px;
+  height:69px;
+  border-radius:24px;
+  background:#ffffff14;
+  backdrop-filter:blur(20px);
+  display:flex;
+  align-items:center;
+  justify-content:space-around;
+  z-index:500;
+  box-shadow:0 8px 30px #0004;
+}
+.dock button{
+  border:0;
+  background:transparent;
+  font-size:27px;
+  transition:.15s;
+}
+.dock button:hover{transform:translateY(-5px) scale(1.08)}
+.dock button:active{transform:scale(.8)}
+
+.page{
+  display:none;
+  position:absolute;
+  inset:0;
+  padding-top:34px;
+  background:#10131b;
+  z-index:100;
+  animation:pageIn .23s ease;
+}
+.page.active{display:block}
+
+.page-header{
+  height:54px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:0 15px;
+  border-bottom:1px solid #ffffff12;
+}
+.back{
+  border:0;
+  background:transparent;
+  color:#fff;
+  font-size:30px;
+}
+.page-title{
+  font-size:21px;
+  font-weight:700;
+}
+
+.content{
+  height:calc(100% - 54px);
+  overflow-y:auto;
+  padding:15px;
+}
+.content::-webkit-scrollbar{width:4px}
+
+.section{
+  background:#1a1f2a;
+  border-radius:17px;
+  padding:15px;
+  margin-bottom:13px;
+  box-shadow:0 7px 25px #0002;
+}
+
+input,textarea,select{
+  width:100%;
+  background:#202633;
+  color:#fff;
+  border:1px solid #3d4555;
+  border-radius:13px;
+  padding:12px;
+  outline:none;
+  margin-bottom:11px;
+}
+textarea{resize:none}
+
+.primary{
+  width:100%;
+  border:0;
+  border-radius:14px;
+  padding:13px;
+  background:#6c63ff;
+  color:#fff;
+  font-weight:700;
+  transition:.15s;
+}
+.primary:hover{filter:brightness(1.12);transform:translateY(-1px)}
+.primary:active{transform:scale(.98)}
+
+.secondary{
+  border:0;
+  border-radius:12px;
+  padding:10px 14px;
+  background:#2a3040;
+  color:#fff;
+}
+
+.calc-display{
+  min-height:80px;
+  background:#080a0e;
+  border-radius:15px;
+  padding:15px;
+  text-align:right;
+  font-size:30px;
+  margin-bottom:10px;
+  overflow:hidden;
+}
+.calc-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+}
+.calc-grid button{
+  height:58px;
+  border:0;
+  border-radius:15px;
+  background:#262c38;
+  color:#fff;
+  font-size:20px;
+  transition:.13s;
+}
+.calc-grid button:hover{transform:translateY(-2px)}
+.calc-grid button:active{transform:scale(.92)}
+.operator{background:#6c63ff!important}
+
+.call-number{
+  height:65px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:34px;
+  margin-bottom:25px;
+}
+.call-pad{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:11px;
+}
+.call-pad button{
+  height:64px;
+  border:0;
+  border-radius:50%;
+  background:#272c38;
+  color:#fff;
+  font-size:21px;
+}
+.call-btn{background:#32d74b!important}
+
+.google-box{
+  display:flex;
+  gap:8px;
+}
+.google-box input{margin:0}
+.google-box button{width:65px}
+
+.setup{
+  position:absolute;
+  inset:0;
+  z-index:2000;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:25px;
   background:
-    radial-gradient(circle at 20% 20%, #6c63ff66, transparent 35%),
-    radial-gradient(circle at 80% 80%, #00c8ff44, transparent 35%),
-    #0d0f16;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 25px;
+    radial-gradient(circle at 20% 15%,#685cff55,transparent 34%),
+    radial-gradient(circle at 80% 80%,#00d9ff2d,transparent 35%),
+    #0c0f16;
+  animation:pageIn .3s;
+}
+.setup-card{width:100%;text-align:center}
+.setup-logo{
+  font-size:67px;
+  animation:phoneFloat 3s ease-in-out infinite;
+}
+.setup h1{
+  font-size:38px;
+  margin-bottom:7px;
+}
+.setup p{
+  color:#aaa;
+  margin-bottom:22px;
+}
+.rules-link{
+  margin-top:12px;
+  color:#70a8ff;
+  font-size:13px;
+  cursor:pointer;
 }
 
-.setup-card {
-  width: 100%;
-  text-align: center;
+.toast{
+  position:absolute;
+  left:50%;
+  bottom:90px;
+  transform:translateX(-50%);
+  background:#fff;
+  color:#111;
+  padding:11px 16px;
+  border-radius:22px;
+  z-index:3000;
+  display:none;
+  font-size:13px;
+  white-space:nowrap;
+  box-shadow:0 8px 30px #0008;
+}
+.toast.show{display:block;animation:toastIn .2s}
+
+.tube{
+  position:absolute;
+  inset:0;
+  background:#000;
+}
+.tube-feed{
+  height:100%;
+  overflow-y:auto;
+  scroll-snap-type:y mandatory;
+}
+.tube-feed::-webkit-scrollbar{display:none}
+.video-card{
+  position:relative;
+  height:100%;
+  scroll-snap-align:start;
+  background:#050505;
+  overflow:hidden;
+}
+.video-card video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.video-bottom{
+  position:absolute;
+  left:14px;
+  right:75px;
+  bottom:24px;
+}
+.video-user{font-weight:bold;margin-bottom:7px}
+.video-caption{font-size:14px}
+.video-actions{
+  position:absolute;
+  right:10px;
+  bottom:28px;
+  display:flex;
+  flex-direction:column;
+  gap:13px;
+  align-items:center;
+}
+.video-actions button{
+  border:0;
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  background:#0008;
+  color:#fff;
+  font-size:21px;
+}
+.like-count{font-size:11px}
+
+.tube-top{
+  position:absolute;
+  top:39px;
+  left:12px;
+  right:12px;
+  z-index:20;
+  display:flex;
+  justify-content:space-between;
+}
+.tube-top button{
+  border:0;
+  background:#0008;
+  color:#fff;
+  padding:9px 13px;
+  border-radius:20px;
 }
 
-.setup-logo {
-  font-size: 65px;
-  margin-bottom: 10px;
+.empty-feed{
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:#999;
+  padding:30px;
 }
 
-.setup h1 {
-  font-size: 38px;
-  margin-bottom: 8px;
+.comments{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  max-height:55%;
+  background:#11151e;
+  border-radius:25px 25px 0 0;
+  z-index:100;
+  padding:14px;
+  display:none;
+  flex-direction:column;
+}
+.comments.show{display:flex;animation:sheetUp .22s ease}
+.comment-list{
+  overflow:auto;
+  flex:1;
+  margin:9px 0;
+}
+.comment{
+  border-bottom:1px solid #ffffff12;
+  padding:8px 0;
+  font-size:13px;
+}
+.comment-form{display:flex;gap:7px}
+.comment-form input{margin:0}
+
+.upload-box{
+  border:2px dashed #4a5161;
+  border-radius:18px;
+  padding:22px;
+  text-align:center;
+  margin-bottom:14px;
+}
+#cameraPreview{
+  width:100%;
+  border-radius:16px;
+  display:none;
+  background:#000;
+  margin-bottom:10px;
 }
 
-.setup p {
-  color: #aaa;
-  margin-bottom: 25px;
+.game-list{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.game-card{
+  background:#1a1f29;
+  border-radius:18px;
+  padding:16px;
+  transition:.17s;
+  box-shadow:0 8px 25px #0002;
+}
+.game-card:hover{
+  transform:translateY(-4px);
+  background:#202634;
+}
+.game-card h3{margin-bottom:6px}
+.game-card p{color:#aaa;font-size:13px;line-height:1.4}
+.game-card .primary{margin-top:12px}
+
+#gamePlay{
+  background:#07090e;
+  z-index:1000;
+  padding-top:34px;
+}
+.game-header{
+  height:60px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 12px;
+  border-bottom:1px solid #ffffff12;
+  background:#0d1118;
+}
+.game-title{
+  font-size:19px;
+  font-weight:bold;
+}
+.game-buttons{
+  display:flex;
+  gap:7px;
+}
+.game-buttons button{
+  border:0;
+  background:#252c38;
+  color:#fff;
+  padding:9px 11px;
+  border-radius:12px;
+}
+.game-area{
+  height:calc(100% - 60px);
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+.game-info{
+  text-align:center;
+  min-height:46px;
+  padding:8px 10px;
+  font-size:13px;
+  color:#bbb;
+}
+.game-canvas{
+  display:block;
+  width:100%;
+  flex:1;
+  background:#111;
+  touch-action:none;
+}
+.game-message{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  text-align:center;
+  background:#000c;
+  padding:22px;
+  border-radius:20px;
+  display:none;
+}
+.game-message.show{
+  display:block;
+  animation:popIn .2s;
+}
+.game-message h2{margin-bottom:8px}
+
+.settings-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px;
+  border-radius:15px;
+  background:#1a1f29;
+  margin-bottom:10px;
 }
 
-.rules-link {
-  color: #6fa8ff;
-  cursor: pointer;
-  margin-top: 12px;
-  font-size: 13px;
+.switch{
+  width:48px;
+  height:28px;
+  border:0;
+  border-radius:20px;
+  background:#444;
+  position:relative;
 }
+.switch::after{
+  content:"";
+  position:absolute;
+  width:22px;
+  height:22px;
+  top:3px;
+  left:3px;
+  background:white;
+  border-radius:50%;
+  transition:.18s;
+}
+.switch.on{background:#6c63ff}
+.switch.on::after{left:23px}
 
-.toast {
-  position: absolute;
-  left: 50%;
-  bottom: 90px;
-  transform: translateX(-50%);
-  background: #fff;
-  color: #111;
-  padding: 11px 16px;
-  border-radius: 20px;
-  z-index: 999;
-  display: none;
-  font-size: 13px;
-}
+.notepad{height:500px}
 
-.toast.show {
-  display: block;
+.color-options{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
 }
-
-.color-options {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+.color-option{
+  width:35px;
+  height:35px;
+  border-radius:50%;
+  border:3px solid transparent;
 }
-
-.color-option {
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  border: 3px solid transparent;
-}
-
-.color-option.selected {
-  border-color: white;
-}
-
-body.purple .primary,
-body.purple .calc-grid button.operator {
-  background: #6c63ff;
-}
+.color-option:hover{transform:scale(1.1)}
 
 body.blue .primary,
-body.blue .calc-grid button.operator {
-  background: #168cff;
-}
-
+body.blue .operator{background:#168cff!important}
 body.green .primary,
-body.green .calc-grid button.operator {
-  background: #16a36a;
-}
-
+body.green .operator{background:#16a36a!important}
 body.red .primary,
-body.red .calc-grid button.operator {
-  background: #e63946;
-}
-
+body.red .operator{background:#e63946!important}
 body.pink .primary,
-body.pink .calc-grid button.operator {
-  background: #e84393;
+body.pink .operator{background:#e84393!important}
+
+@keyframes pageIn{
+  from{opacity:0;transform:scale(.98)}
+  to{opacity:1;transform:scale(1)}
+}
+@keyframes toastIn{
+  from{opacity:0;transform:translate(-50%,10px)}
+  to{opacity:1;transform:translate(-50%,0)}
+}
+@keyframes sheetUp{
+  from{transform:translateY(100%)}
+  to{transform:translateY(0)}
+}
+@keyframes popIn{
+  from{transform:translate(-50%,-50%) scale(.8);opacity:0}
+  to{transform:translate(-50%,-50%) scale(1);opacity:1}
+}
+@keyframes iconBob{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-2px)}
+}
+@keyframes softFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-3px)}
+}
+@keyframes phoneFloat{
+  0%,100%{transform:translateY(0) rotate(0)}
+  50%{transform:translateY(-8px) rotate(-2deg)}
 }
 
-@media (max-height: 700px) {
-  .phone {
-    height: 100vh;
-    border-width: 0;
-    border-radius: 0;
+@media(max-height:700px){
+  .phone{
+    height:100vh;
+    border:0;
+    border-radius:0;
   }
 }
 </style>
@@ -673,1849 +648,1923 @@ body.pink .calc-grid button.operator {
 
 <body class="purple">
 
-<div class="phone pulse" id="phone">
-
-  <div class="screen">
-
-    <div class="status">
-      <span id="statusTime">12:00</span>
-      <span>● ● ▰</span>
-    </div>
-
-    <div class="dynamic-island"></div>
-
-    <!-- HOME -->
-    <div class="home" id="home">
-
-      <div class="clock" id="clock">12:00</div>
-      <div class="date" id="date"></div>
-
-      <div class="app-grid">
-
-        <button class="app" onclick="openPage('calculator')">
-          <div class="app-icon">🧮</div>
-          <div class="app-name">Calculator</div>
-        </button>
-
-        <button class="app" onclick="openPage('call')">
-          <div class="app-icon">📞</div>
-          <div class="app-name">Phone</div>
-        </button>
-
-        <button class="app" onclick="openTube()">
-          <div class="app-icon">▶️</div>
-          <div class="app-name">PulseTube</div>
-        </button>
-
-        <button class="app" onclick="openPage('google')">
-          <div class="app-icon">🔎</div>
-          <div class="app-name">Google</div>
-        </button>
-
-        <button class="app" onclick="openPage('games')">
-          <div class="app-icon">🎮</div>
-          <div class="app-name">Games</div>
-        </button>
-
-        <button class="app" onclick="openPage('notepad')">
-          <div class="app-icon">📝</div>
-          <div class="app-name">Notepad</div>
-        </button>
-
-        <button class="app" onclick="openPage('settings')">
-          <div class="app-icon">⚙️</div>
-          <div class="app-name">Settings</div>
-        </button>
-
-        <button class="app" onclick="openPage('rules')">
-          <div class="app-icon">📜</div>
-          <div class="app-name">Rules</div>
-        </button>
-
-        <button class="app" onclick="openPage('record')">
-          <div class="app-icon">🎥</div>
-          <div class="app-name">Create</div>
-        </button>
-
-      </div>
-    </div>
-
-    <!-- DOCK -->
-    <div class="dock">
-      <button onclick="openPage('call')">📞</button>
-      <button onclick="openTube()">▶️</button>
-      <button onclick="openPage('google')">🌐</button>
-      <button onclick="openPage('settings')">⚙️</button>
-    </div>
-
-    <!-- CALCULATOR -->
-    <div class="page" id="calculator">
-      <div class="page-header">
-        <button class="back" onclick="goHome()">‹</button>
-        <div class="page-title">Calculator</div>
-      </div>
-
-      <div class="content">
-        <div class="calc-display" id="calcDisplay">0</div>
-
-        <div class="calc-grid">
-          <button onclick="calcClear()">AC</button>
-          <button onclick="calcDelete()">⌫</button>
-          <button onclick="calcAdd('%')">%</button>
-          <button class="operator" onclick="calcAdd('/')">÷</button>
-
-          <button onclick="calcAdd('7')">7</button>
-          <button onclick="calcAdd('8')">8</button>
-          <button onclick="calcAdd('9')">9</button>
-          <button class="operator" onclick="calcAdd('*')">×</button>
-
-          <button onclick="calcAdd('4')">4</button>
-          <button onclick="calcAdd('5')">5</button>
-          <button onclick="calcAdd('6')">6</button>
-          <button class="operator" onclick="calcAdd('-')">−</button>
-
-          <button onclick="calcAdd('1')">1</button>
-          <button onclick="calcAdd('2')">2</button>
-          <button onclick="calcAdd('3')">3</button>
-          <button class="operator" onclick="calcAdd('+')">+</button>
-
-          <button onclick="calcAdd('0')" style="grid-column:span 2">0</button>
-          <button onclick="calcAdd('.')">.</button>
-          <button class="operator" onclick="calcResult()">=</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- CALL -->
-    <div class="page" id="call">
-      <div class="page-header">
-        <button class="back" onclick="goHome()">‹</button>
-        <div class="page-title">Phone</div>
-      </div>
-
-      <div class="content">
-
-        <div class="call-number" id="callNumber"></div>
-
-        <div class="call-pad">
-          <button onclick="dial('1')">1</button>
-          <button onclick="dial('2')">2</button>
-          <button onclick="dial('3')">3</button>
-          <button onclick="dial('4')">4</button>
-          <button onclick="dial('5')">5</button>
-          <button onclick="dial('6')">6</button>
-          <button onclick="dial('7')">7</button>
-          <button onclick="dial('8')">8</button>
-          <button onclick="dial('9')">9</button>
-          <button onclick="dial('*')">*</button>
-          <button onclick="dial('0')">0</button>
-          <button onclick="dial('#')">#</button>
-          <button class="call-btn" onclick="makeCall()" style="grid-column:2">📞</button>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- GOOGLE -->
-    <div class="page" id="google">
-      <div class="page-header">
-        <button class="back" onclick="goHome()">‹</button>
-        <div class="page-title">Google</div>
-      </div>
-
-      <div class="content">
-        <div class="section">
-          <h3>Search Google</h3>
-
-          <div class="google-box">
-            <input id="googleSearch" placeholder="Search Google..."
-              onkeydown="if(event.key==='Enter') googleSearch()">
-
-            <button class="primary" onclick="googleSearch()">🔎</button>
-          </div>
-        </div>
-
-        <p style="color:#999;font-size:13px">
-          Search opens the real Google website in a new tab.
-        </p>
-      </div>
-    </div>
-
-    <!-- RECORD -->
-    <div class="page" id="record">
-      <div class="page-header">
-        <button class="back" onclick="goHome()">‹</button>
-        <div class="page-title">Create Video</div>
-      </div>
-
-      <div class="content">
-
-        <div class="section">
-          <h3>🎥 Record</h3>
-
-          <video id="cameraPreview" autoplay muted playsinline></video>
-
-          <button class="primary" id="cameraButton" onclick="startCamera()">
-            Start Camera
-          </button>
-
-          <button class="primary" id="recordButton"
-            style="display:none;margin-top:10px"
-            onclick="toggleRecording()">
-            🔴 Start Recording
-          </button>
-
-          <p id="recordStatus"
-            style="text-align:center;color:#999;margin-top:10px">
-          </p>
-        </div>
-
-        <div class="section">
-          <h3>📁 Or upload a video</h3>
-
-          <input type="file"
-            id="videoFile"
-            accept="video/*">
-
-          <input id="videoCaption"
-            maxlength="150"
-            placeholder="Caption...">
-
-          <button class="primary" onclick="uploadSelectedVideo()">
-            Upload Video
-          </button>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- GAMES -->
-    <div class="page" id="games">
-      <div class="page-header">
-        <button class="back" onclick="goHome()">‹</button>
-        <div class="page-title">Games</div>
-      </div>
-
-      <div class="content">
-
-        <div class="game-card">
-          <h3>🐤 Flappy Flop</h3>
-          <p style="color:#aaa">Tap/click to fly through the gaps.</p>
-          <button class="primary" onclick="startFlappy()">Play</button>
-        </div>
-
-        <div class="game-card">
-          <h3>⚡ Neon Tap</h3>
-          <p id="tapScore">Score: 0</p>
-          <button class="primary" onclick="tapGame()">TAP!</button>
-        </div>
-
-        <div class="game-card">
-          <h3>🎯 Target Rush</h3>
-          <p id="targetScore">Score: 0</p>
-          <button class="primary" onclick="targetGame()">Hit Target</button>
-        </div>
-
-        <div class="game-card">
-          <h3>🎲 Lucky Roll</h3>
-          <p id="luckyResult">Roll the dice.</p>
-          <button class="primary" onclick="rollDice()">Roll</button>
-        </div>
-
-        <div class="game-card">
-          <h3>🧠 Memory</h3>
-          <p id="memoryText">Remember: 7392</p>
-          <button class="primary" onclick="newMemory()">New Number</button>
-        </div>
-
-        <canvas id="gameCanvas" width="360" height="500"
-          style="display:none"></canvas>
-
-      </div>
-    </div>
-
-    <!-- NOTEPAD -->
-    <div class="page" id="notepad">
-      <div class="page-header">
-        <button class="back" onclick="goHome()">‹</button>
-        <div class="page-title">Notepad</div>
-      </div>
-
-      <div class="content">
-        <textarea id="notes"
-          class="notepad"
-          placeholder="Write something..."></textarea>
-
-        <button class="primary" onclick="saveNotes()">
-          Save
-        </button>
-      </div>
-    </div>
-
-    <!-- SETTINGS -->
-    <div class="page" id="settings">
-      <div class="page-header">
-        <button class="back" onclick="goHome()">‹</button>
-        <div class="page-title">Settings</div>
-      </div>
-
-      <div class="content">
-
-        <div class="settings-row">
-          <span>Username</span>
-          <button class="secondary" onclick="changeUsername()">Change</button>
-        </div>
-
-        <div class="settings-row">
-          <span>Silent Mode</span>
-          <button class="switch" id="silentSwitch"
-            onclick="toggleSilent()"></button>
-        </div>
-
-        <div class="section">
-          <h3>Phone Model</h3>
-
-          <select id="phoneModel" onchange="changePhoneModel()">
-            <option value="pulse">PulsePhone X</option>
-            <option value="iphone">iPhone 18 Pro Max</option>
-            <option value="samsung">Samsung Galaxy Ultra 26</option>
-            <option value="pixel">Google Pixel Pro</option>
-            <option value="nothing">Nothing Phone</option>
-          </select>
-        </div>
-
-        <div class="section">
-          <h3>Theme</h3>
-
-          <div class="color-options">
-            <button class="color-option"
-              style="background:#6c63ff"
-              onclick="setTheme('purple')"></button>
-
-            <button class="color-option"
-              style="background:#168cff"
-              onclick="setTheme('blue')"></button>
-
-            <button class="color-option"
-              style="background:#16a36a"
-              onclick="setTheme('green')"></button>
-
-            <button class="color-option"
-              style="background:#e63946"
-              onclick="setTheme('red')"></button>
-
-            <button class="color-option"
-              style="background:#e84393"
-              onclick="setTheme('pink')"></button>
-          </div>
-        </div>
-
-        <div class="section">
-          <h3>Profile</h3>
-
-          <input id="profileAvatar"
-            placeholder="Avatar emoji, e.g. 🐺">
-
-          <button class="primary" onclick="saveProfile()">
-            Save Profile
-          </button>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- RULES -->
-    <div class="page" id="rules">
-      <div class="page-header">
-        <button class="back" onclick="goHome()">‹</button>
-        <div class="page-title">Rules</div>
-      </div>
-
-      <div class="content">
-
-        <div class="section">
-          <h3>PulsePhone Rules</h3>
-
-          <p style="line-height:1.7;color:#ccc">
-            Be respectful.<br>
-            Don't upload inappropriate content.<br>
-            Don't upload personal information.<br>
-            Don't impersonate other people.<br>
-            Don't spam videos.<br>
-            Keep PulsePhone fun and safe.
-          </p>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- PULSETUBE -->
-    <div class="page" id="tube">
-
-      <div class="tube">
-
-        <div class="tube-top">
-          <button onclick="goHome()">‹ PulsePhone</button>
-          <button onclick="openPage('record')">＋ Create</button>
-        </div>
-
-        <div class="tube-feed" id="tubeFeed">
-
-          <div class="empty-feed">
-            <div>
-              <div style="font-size:55px">🎬</div>
-              <h2>No videos yet</h2>
-              <p style="margin-top:8px">
-                Be the first person to upload one!
-              </p>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="comments" id="commentsBox">
-
-          <button class="secondary"
-            style="align-self:flex-end"
-            onclick="closeComments()">
-            ✕
-          </button>
-
-          <h3>Comments</h3>
-
-          <div class="comment-list" id="commentList"></div>
-
-          <div class="comment-form">
-            <input id="commentInput"
-              placeholder="Write a comment...">
-
-            <button class="primary"
-              style="width:75px"
-              onclick="addComment()">
-              Send
-            </button>
-          </div>
-
-        </div>
-
-      </div>
-    </div>
-
-    <div class="toast" id="toast"></div>
-
-    <!-- USERNAME SETUP -->
-    <div class="setup" id="setup">
-
-      <div class="setup-card">
-
-        <div class="setup-logo">📱</div>
-
-        <h1>PulsePhone</h1>
-
-        <p>
-          Welcome! Choose your username.
-        </p>
-
-        <input id="usernameInput"
-          maxlength="20"
-          placeholder="Username">
-
-        <button class="primary" onclick="finishSetup()">
-          Continue
-        </button>
-
-        <div class="rules-link"
-          onclick="showRulesFromSetup()">
-          you agree to our rules
-        </div>
-
-      </div>
-    </div>
+<div class="phone" id="phone">
+<div class="screen">
+
+<div class="status">
+  <span id="statusTime">12:00</span>
+  <span>● ● ▰</span>
+</div>
+
+<div class="dynamic-island"></div>
+
+<!-- HOME -->
+<div class="home" id="home">
+
+  <div class="clock" id="clock">12:00</div>
+  <div class="date" id="date"></div>
+
+  <div class="app-grid">
+
+    <button class="app" onclick="openPage('calculator')">
+      <div class="app-icon">🧮</div>
+      <div class="app-name">Calculator</div>
+    </button>
+
+    <button class="app" onclick="openPage('call')">
+      <div class="app-icon">📞</div>
+      <div class="app-name">Phone</div>
+    </button>
+
+    <button class="app" onclick="openTube()">
+      <div class="app-icon">▶️</div>
+      <div class="app-name">PulseTube</div>
+    </button>
+
+    <button class="app" onclick="openPage('google')">
+      <div class="app-icon">🔎</div>
+      <div class="app-name">Google</div>
+    </button>
+
+    <button class="app" onclick="openPage('games')">
+      <div class="app-icon">🎮</div>
+      <div class="app-name">Games</div>
+    </button>
+
+    <button class="app" onclick="openPage('notepad')">
+      <div class="app-icon">📝</div>
+      <div class="app-name">Notepad</div>
+    </button>
+
+    <button class="app" onclick="openPage('settings')">
+      <div class="app-icon">⚙️</div>
+      <div class="app-name">Settings</div>
+    </button>
+
+    <button class="app" onclick="openPage('rules')">
+      <div class="app-icon">📜</div>
+      <div class="app-name">Rules</div>
+    </button>
+
+    <button class="app" onclick="openPage('record')">
+      <div class="app-icon">🎥</div>
+      <div class="app-name">Create</div>
+    </button>
 
   </div>
 </div>
 
+<!-- DOCK -->
+<div class="dock">
+  <button onclick="openPage('call')">📞</button>
+  <button onclick="openTube()">▶️</button>
+  <button onclick="openPage('google')">🌐</button>
+  <button onclick="openPage('settings')">⚙️</button>
+</div>
+
+<!-- CALCULATOR -->
+<div class="page" id="calculator">
+<div class="page-header">
+  <button class="back" onclick="goHome()">‹</button>
+  <div class="page-title">Calculator</div>
+</div>
+<div class="content">
+
+<div class="calc-display" id="calcDisplay">0</div>
+
+<div class="calc-grid">
+  <button onclick="calcClear()">AC</button>
+  <button onclick="calcDelete()">⌫</button>
+  <button onclick="calcAdd('%')">%</button>
+  <button class="operator" onclick="calcAdd('/')">÷</button>
+
+  <button onclick="calcAdd('7')">7</button>
+  <button onclick="calcAdd('8')">8</button>
+  <button onclick="calcAdd('9')">9</button>
+  <button class="operator" onclick="calcAdd('*')">×</button>
+
+  <button onclick="calcAdd('4')">4</button>
+  <button onclick="calcAdd('5')">5</button>
+  <button onclick="calcAdd('6')">6</button>
+  <button class="operator" onclick="calcAdd('-')">−</button>
+
+  <button onclick="calcAdd('1')">1</button>
+  <button onclick="calcAdd('2')">2</button>
+  <button onclick="calcAdd('3')">3</button>
+  <button class="operator" onclick="calcAdd('+')">+</button>
+
+  <button onclick="calcAdd('0')" style="grid-column:span 2">0</button>
+  <button onclick="calcAdd('.')">.</button>
+  <button class="operator" onclick="calcResult()">=</button>
+</div>
+
+</div>
+</div>
+
+<!-- CALL -->
+<div class="page" id="call">
+<div class="page-header">
+  <button class="back" onclick="goHome()">‹</button>
+  <div class="page-title">Phone</div>
+</div>
+<div class="content">
+
+<div class="call-number" id="callNumber"></div>
+
+<div class="call-pad">
+  <button onclick="dial('1')">1</button>
+  <button onclick="dial('2')">2</button>
+  <button onclick="dial('3')">3</button>
+  <button onclick="dial('4')">4</button>
+  <button onclick="dial('5')">5</button>
+  <button onclick="dial('6')">6</button>
+  <button onclick="dial('7')">7</button>
+  <button onclick="dial('8')">8</button>
+  <button onclick="dial('9')">9</button>
+  <button onclick="dial('*')">*</button>
+  <button onclick="dial('0')">0</button>
+  <button onclick="dial('#')">#</button>
+  <button class="call-btn" onclick="makeCall()" style="grid-column:2">📞</button>
+</div>
+
+</div>
+</div>
+
+<!-- GOOGLE -->
+<div class="page" id="google">
+<div class="page-header">
+  <button class="back" onclick="goHome()">‹</button>
+  <div class="page-title">Google</div>
+</div>
+
+<div class="content">
+<div class="section">
+<h3 style="margin-bottom:10px">Search Google</h3>
+
+<div class="google-box">
+<input
+  id="googleSearch"
+  placeholder="Search..."
+  onkeydown="if(event.key==='Enter')googleSearch()"
+>
+<button class="primary" onclick="googleSearch()">🔎</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- CREATE -->
+<div class="page" id="record">
+<div class="page-header">
+  <button class="back" onclick="goHome()">‹</button>
+  <div class="page-title">Create Video</div>
+</div>
+
+<div class="content">
+
+<div class="section">
+<h3 style="margin-bottom:10px">🎥 Record</h3>
+
+<video id="cameraPreview" autoplay muted playsinline></video>
+
+<button class="primary" id="cameraButton" onclick="startCamera()">
+Start Camera
+</button>
+
+<button
+  class="primary"
+  id="recordButton"
+  style="display:none;margin-top:9px"
+  onclick="toggleRecording()">
+🔴 Start Recording
+</button>
+
+<p id="recordStatus"
+style="text-align:center;color:#999;margin-top:10px">
+</p>
+</div>
+
+<div class="section">
+<h3 style="margin-bottom:10px">📁 Upload Video</h3>
+
+<input id="videoFile" type="file" accept="video/*">
+
+<input id="videoCaption"
+maxlength="150"
+placeholder="Caption...">
+
+<button class="primary" onclick="uploadSelectedVideo()">
+Upload Video
+</button>
+
+</div>
+</div>
+</div>
+
+<!-- GAMES -->
+<div class="page" id="games">
+<div class="page-header">
+  <button class="back" onclick="goHome()">‹</button>
+  <div class="page-title">Games</div>
+</div>
+
+<div class="content">
+<div class="game-list">
+
+<div class="game-card">
+<h3>🐤 Flappy Flop</h3>
+<p>Tap or click to fly through the pipes.</p>
+<button class="primary" onclick="startGame('flappy')">PLAY</button>
+</div>
+
+<div class="game-card">
+<h3>🎯 Target Dummy</h3>
+<p>Click the dummy's HEAD to defeat it. Body shots don't count.</p>
+<button class="primary" onclick="startGame('target')">PLAY</button>
+</div>
+
+<div class="game-card">
+<h3>⚡ Neon Catch</h3>
+<p>Click the glowing targets before they disappear.</p>
+<button class="primary" onclick="startGame('neon')">PLAY</button>
+</div>
+
+<div class="game-card">
+<h3>🧠 Memory Match</h3>
+<p>Find all matching pairs.</p>
+<button class="primary" onclick="startGame('memory')">PLAY</button>
+</div>
+
+<div class="game-card">
+<h3>☄️ Meteor Dodge</h3>
+<p>Move the ship and survive as long as possible.</p>
+<button class="primary" onclick="startGame('meteor')">PLAY</button>
+</div>
+
+</div>
+</div>
+</div>
+
+<!-- GAME PLAY SCREEN -->
+<div class="page" id="gamePlay">
+
+<div class="game-header">
+  <button class="secondary" onclick="stopGame();openPage('games')">‹ Games</button>
+
+  <div class="game-title" id="gameTitle">
+  Game
+  </div>
+
+  <div class="game-buttons">
+    <button onclick="restartGame()">↻</button>
+  </div>
+</div>
+
+<div class="game-area">
+
+<div class="game-info" id="gameInfo"></div>
+
+<canvas
+  id="gameCanvas"
+  class="game-canvas"
+  width="360"
+  height="650">
+</canvas>
+
+<div class="game-message" id="gameMessage">
+<h2 id="gameOverTitle">Game Over</h2>
+<p id="gameOverText"></p>
+<button class="primary" style="margin-top:12px" onclick="restartGame()">
+PLAY AGAIN
+</button>
+</div>
+
+</div>
+</div>
+
+<!-- NOTEPAD -->
+<div class="page" id="notepad">
+<div class="page-header">
+  <button class="back" onclick="goHome()">‹</button>
+  <div class="page-title">Notepad</div>
+</div>
+<div class="content">
+<textarea class="notepad" id="notes" placeholder="Write something..."></textarea>
+<button class="primary" onclick="saveNotes()">Save</button>
+</div>
+</div>
+
+<!-- SETTINGS -->
+<div class="page" id="settings">
+<div class="page-header">
+  <button class="back" onclick="goHome()">‹</button>
+  <div class="page-title">Settings</div>
+</div>
+
+<div class="content">
+
+<div class="settings-row">
+<span>Username</span>
+<button class="secondary" onclick="changeUsername()">Change</button>
+</div>
+
+<div class="settings-row">
+<span>Silent Mode</span>
+<button class="switch" id="silentSwitch" onclick="toggleSilent()"></button>
+</div>
+
+<div class="section">
+<h3 style="margin-bottom:10px">Phone Model</h3>
+
+<select id="phoneModel" onchange="changePhoneModel()">
+<option value="pulse">PulsePhone X</option>
+<option value="iphone">iPhone 18 Pro Max</option>
+<option value="samsung">Samsung Galaxy Ultra 26</option>
+<option value="pixel">Google Pixel Pro</option>
+<option value="nothing">Nothing Phone</option>
+</select>
+</div>
+
+<div class="section">
+<h3 style="margin-bottom:10px">Theme</h3>
+
+<div class="color-options">
+<button class="color-option" style="background:#6c63ff" onclick="setTheme('purple')"></button>
+<button class="color-option" style="background:#168cff" onclick="setTheme('blue')"></button>
+<button class="color-option" style="background:#16a36a" onclick="setTheme('green')"></button>
+<button class="color-option" style="background:#e63946" onclick="setTheme('red')"></button>
+<button class="color-option" style="background:#e84393" onclick="setTheme('pink')"></button>
+</div>
+</div>
+
+<div class="section">
+<h3 style="margin-bottom:10px">Profile</h3>
+
+<input id="profileAvatar" placeholder="Avatar emoji, e.g. 🐺">
+
+<button class="primary" onclick="saveProfile()">
+Save Profile
+</button>
+</div>
+
+</div>
+</div>
+
+<!-- RULES -->
+<div class="page" id="rules">
+<div class="page-header">
+  <button class="back" onclick="goHome()">‹</button>
+  <div class="page-title">Rules</div>
+</div>
+
+<div class="content">
+<div class="section">
+<h3 style="margin-bottom:10px">PulsePhone Rules</h3>
+
+<p style="line-height:1.8;color:#ccc">
+Be respectful.<br>
+Don't upload inappropriate content.<br>
+Don't upload personal information.<br>
+Don't spam.<br>
+Don't impersonate people.<br>
+Keep PulsePhone safe and fun.
+</p>
+</div>
+</div>
+</div>
+
+<!-- PULSETUBE -->
+<div class="page" id="tube">
+<div class="tube">
+
+<div class="tube-top">
+<button onclick="goHome()">‹ PulsePhone</button>
+<button onclick="openPage('record')">＋ Create</button>
+</div>
+
+<div id="tubeFeed" class="tube-feed">
+<div class="empty-feed">
+<div>
+<div style="font-size:55px">🎬</div>
+<h2>No videos yet</h2>
+<p style="margin-top:8px">Be the first person to upload one!</p>
+</div>
+</div>
+</div>
+
+<div class="comments" id="commentsBox">
+
+<button class="secondary" style="align-self:flex-end" onclick="closeComments()">✕</button>
+
+<h3>Comments</h3>
+
+<div class="comment-list" id="commentList"></div>
+
+<div class="comment-form">
+<input id="commentInput" placeholder="Write a comment...">
+<button class="primary" style="width:75px" onclick="addComment()">Send</button>
+</div>
+
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- SETUP -->
+<div class="setup" id="setup">
+
+<div class="setup-card">
+
+<div class="setup-logo">📱</div>
+
+<h1>PulsePhone</h1>
+
+<p>Welcome! Choose your username.</p>
+
+<input id="usernameInput" maxlength="20" placeholder="Username">
+
+<button class="primary" onclick="finishSetup()">
+Continue
+</button>
+
+<div class="rules-link" onclick="showRulesFromSetup()">
+you agree to our rules
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+
 <script>
-/* =========================================================
-   SUPABASE
-========================================================= */
+/* ===============================
+SUPABASE
+================================ */
 
-const SUPABASE_URL =
-  "https://yujhjmpfytmykqhstwwt.supabase.co";
+const SUPABASE_URL="https://yujhjmpfytmykqhstwwt.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_eWIDGXOHrqhkH6mFXxldig_r7Dh2XgP";
+const VIDEO_BUCKET="videos";
 
-const SUPABASE_PUBLISHABLE_KEY =
-  "sb_publishable_eWIDGXOHrqhkH6mFXxldig_r7Dh2XgP";
+const supabaseClient=window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
 
-const VIDEO_BUCKET = "videos";
+/* ===============================
+USER
+================================ */
 
-const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY
-  );
+let username=localStorage.getItem("pulseUsername")||"";
+let avatar=localStorage.getItem("pulseAvatar")||"🙂";
 
-
-/* =========================================================
-   USER
-========================================================= */
-
-let username =
-  localStorage.getItem("pulseUsername") || "";
-
-let avatar =
-  localStorage.getItem("pulseAvatar") || "🙂";
-
-const bannedWords = [
-  "fuck",
-  "shit",
-  "dick",
-  "pussy",
-  "bitch",
-  "asshole",
-  "nigger",
-  "nigga",
-  "porn",
-  "sex",
-  "xxx"
+const bannedWords=[
+"fuck","shit","dick","pussy","bitch","asshole",
+"nigger","nigga","porn","sex","xxx"
 ];
 
-function validUsername(name) {
-
-  name = name.trim();
-
-  if (!name) {
+function validUsername(name){
+  name=name.trim();
+  if(!name){
     showToast("Enter a username.");
     return false;
   }
-
-  if (name.length < 2) {
+  if(name.length<2){
     showToast("Username is too short.");
     return false;
   }
-
-  const lower = name.toLowerCase();
-
-  for (const word of bannedWords) {
-    if (lower.includes(word)) {
-      showToast("That username isn't allowed.");
-      return false;
-    }
+  const lower=name.toLowerCase();
+  if(bannedWords.some(word=>lower.includes(word))){
+    showToast("That username isn't allowed.");
+    return false;
   }
-
   return true;
 }
 
-function finishSetup() {
-
-  const input =
-    document.getElementById("usernameInput");
-
-  const name = input.value.trim();
-
-  if (!validUsername(name)) return;
-
-  username = name;
-
-  localStorage.setItem(
-    "pulseUsername",
-    username
-  );
-
-  document.getElementById("setup").style.display =
-    "none";
-
-  showToast("Welcome to PulsePhone!");
+function finishSetup(){
+  const name=document.getElementById("usernameInput").value.trim();
+  if(!validUsername(name))return;
+  username=name;
+  localStorage.setItem("pulseUsername",username);
+  document.getElementById("setup").style.display="none";
+  showToast("Welcome to PulsePhone! 📱");
 }
 
-function showRulesFromSetup() {
-
-  document.getElementById("setup").style.display =
-    "none";
-
+function showRulesFromSetup(){
+  document.getElementById("setup").style.display="none";
   openPage("rules");
 }
 
+/* ===============================
+CLOCK
+================================ */
 
-/* =========================================================
-   CLOCK
-========================================================= */
+function updateClock(){
+  const now=new Date();
 
-function updateClock() {
+  const time=now.toLocaleTimeString([],{
+    hour:"2-digit",
+    minute:"2-digit"
+  });
 
-  const now = new Date();
+  const date=now.toLocaleDateString([],{
+    weekday:"long",
+    month:"long",
+    day:"numeric"
+  });
 
-  const time =
-    now.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit"
-    });
-
-  const date =
-    now.toLocaleDateString([], {
-      weekday: "long",
-      month: "long",
-      day: "numeric"
-    });
-
-  document.getElementById("clock").textContent =
-    time;
-
-  document.getElementById("statusTime").textContent =
-    time;
-
-  document.getElementById("date").textContent =
-    date;
+  document.getElementById("clock").textContent=time;
+  document.getElementById("statusTime").textContent=time;
+  document.getElementById("date").textContent=date;
 }
-
-setInterval(updateClock, 1000);
+setInterval(updateClock,1000);
 updateClock();
 
+/* ===============================
+NAVIGATION
+================================ */
 
-/* =========================================================
-   NAVIGATION
-========================================================= */
+function openPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById("home").style.display="none";
+  document.querySelector(".dock").style.display="none";
 
-function openPage(id) {
-
-  document.querySelectorAll(".page")
-    .forEach(page =>
-      page.classList.remove("active")
-    );
-
-  document.getElementById("home")
-    .style.display = "none";
-
-  document.querySelector(".dock")
-    .style.display = "none";
-
-  document.getElementById(id)
-    .classList.add("active");
+  document.getElementById(id).classList.add("active");
 }
 
-function goHome() {
-
-  document.querySelectorAll(".page")
-    .forEach(page =>
-      page.classList.remove("active")
-    );
-
-  document.getElementById("home")
-    .style.display = "block";
-
-  document.querySelector(".dock")
-    .style.display = "flex";
-
+function goHome(){
   stopCamera();
+
+  if(currentGame){
+    stopGame();
+  }
+
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById("home").style.display="block";
+  document.querySelector(".dock").style.display="flex";
 }
 
-function showToast(message) {
-
-  const toast =
-    document.getElementById("toast");
-
-  toast.textContent = message;
+function showToast(message){
+  const toast=document.getElementById("toast");
+  toast.textContent=message;
   toast.classList.add("show");
 
-  setTimeout(() => {
+  clearTimeout(window.toastTimer);
+  window.toastTimer=setTimeout(()=>{
     toast.classList.remove("show");
-  }, 2200);
+  },2200);
 }
 
+/* ===============================
+CALCULATOR
+================================ */
 
-/* =========================================================
-   CALCULATOR
-========================================================= */
+let calcValue="";
 
-let calcValue = "";
-
-function calcAdd(value) {
-
-  if (calcValue.length > 30) return;
-
-  calcValue += value;
-
-  document.getElementById("calcDisplay")
-    .textContent = calcValue || "0";
+function calcAdd(v){
+  if(calcValue.length>=35)return;
+  calcValue+=v;
+  document.getElementById("calcDisplay").textContent=calcValue||"0";
 }
 
-function calcClear() {
-
-  calcValue = "";
-
-  document.getElementById("calcDisplay")
-    .textContent = "0";
+function calcClear(){
+  calcValue="";
+  document.getElementById("calcDisplay").textContent="0";
 }
 
-function calcDelete() {
-
-  calcValue =
-    calcValue.slice(0, -1);
-
-  document.getElementById("calcDisplay")
-    .textContent = calcValue || "0";
+function calcDelete(){
+  calcValue=calcValue.slice(0,-1);
+  document.getElementById("calcDisplay").textContent=calcValue||"0";
 }
 
-function calcResult() {
+function calcResult(){
+  try{
+    if(!calcValue)return;
 
-  try {
+    const safe=calcValue.replace(/[^0-9+\-*/%.()]/g,"");
+    const result=Function("return("+safe+")")();
 
-    if (!calcValue) return;
-
-    const safe =
-      calcValue.replace(/[^0-9+\-*/%.()]/g, "");
-
-    const result =
-      Function("return (" + safe + ")")();
-
-    calcValue = String(result);
-
-    document.getElementById("calcDisplay")
-      .textContent = calcValue;
-
-  } catch {
-
-    document.getElementById("calcDisplay")
-      .textContent = "Error";
-
-    calcValue = "";
+    calcValue=String(result);
+    document.getElementById("calcDisplay").textContent=calcValue;
+  }catch{
+    calcValue="";
+    document.getElementById("calcDisplay").textContent="Error";
   }
 }
 
+/* ===============================
+CALL
+================================ */
 
-/* =========================================================
-   PHONE
-========================================================= */
+let dialNumber="";
 
-let dialNumber = "";
-
-function dial(number) {
-
-  if (dialNumber.length >= 15) return;
-
-  dialNumber += number;
-
-  document.getElementById("callNumber")
-    .textContent = dialNumber;
+function dial(n){
+  if(dialNumber.length>=15)return;
+  dialNumber+=n;
+  document.getElementById("callNumber").textContent=dialNumber;
 }
 
-function makeCall() {
-
-  if (dialNumber === "1111") {
-
-    showToast("Not available");
-
-  } else if (!dialNumber) {
-
+function makeCall(){
+  if(!dialNumber){
     showToast("Enter a number.");
-
-  } else {
-
-    showToast("Not available");
+    return;
   }
+
+  showToast("Not available");
 }
 
+/* ===============================
+GOOGLE
+================================ */
 
-/* =========================================================
-   GOOGLE
-========================================================= */
-
-function googleSearch() {
-
-  const q =
-    document.getElementById("googleSearch")
-      .value.trim();
-
-  if (!q) return;
+function googleSearch(){
+  const q=document.getElementById("googleSearch").value.trim();
+  if(!q)return;
 
   window.open(
-    "https://www.google.com/search?q=" +
-    encodeURIComponent(q),
+    "https://www.google.com/search?q="+encodeURIComponent(q),
     "_blank"
   );
 }
 
+/* ===============================
+NOTES
+================================ */
 
-/* =========================================================
-   SETTINGS
-========================================================= */
+document.getElementById("notes").value=
+localStorage.getItem("pulseNotes")||"";
 
-let silent =
-  localStorage.getItem("pulseSilent") === "true";
-
-function updateSilentButton() {
-
-  const button =
-    document.getElementById("silentSwitch");
-
-  button.classList.toggle("on", silent);
-}
-
-function toggleSilent() {
-
-  silent = !silent;
-
-  localStorage.setItem(
-    "pulseSilent",
-    silent
-  );
-
-  updateSilentButton();
-
-  showToast(
-    silent
-      ? "Silent mode ON"
-      : "Silent mode OFF"
-  );
-}
-
-updateSilentButton();
-
-
-function changeUsername() {
-
-  const newName =
-    prompt("New username:", username);
-
-  if (!newName) return;
-
-  if (!validUsername(newName)) return;
-
-  username = newName.trim();
-
-  localStorage.setItem(
-    "pulseUsername",
-    username
-  );
-
-  showToast("Username changed.");
-}
-
-
-function changePhoneModel() {
-
-  const model =
-    document.getElementById("phoneModel").value;
-
-  const phone =
-    document.getElementById("phone");
-
-  phone.className =
-    "phone " + model;
-
-  localStorage.setItem(
-    "pulsePhoneModel",
-    model
-  );
-}
-
-
-function setTheme(theme) {
-
-  document.body.className = theme;
-
-  localStorage.setItem(
-    "pulseTheme",
-    theme
-  );
-}
-
-
-function saveProfile() {
-
-  const input =
-    document.getElementById("profileAvatar");
-
-  if (input.value.trim()) {
-
-    avatar = input.value.trim();
-
-    localStorage.setItem(
-      "pulseAvatar",
-      avatar
-    );
-  }
-
-  showToast("Profile saved.");
-}
-
-
-/* =========================================================
-   NOTEPAD
-========================================================= */
-
-document.getElementById("notes").value =
-  localStorage.getItem("pulseNotes") || "";
-
-function saveNotes() {
-
+function saveNotes(){
   localStorage.setItem(
     "pulseNotes",
     document.getElementById("notes").value
   );
-
-  showToast("Notes saved.");
+  showToast("Notes saved!");
 }
 
+/* ===============================
+SETTINGS
+================================ */
 
-/* =========================================================
-   PULSETUBE
-========================================================= */
+let silent=localStorage.getItem("pulseSilent")==="true";
 
-let currentCommentVideo = null;
+function updateSilent(){
+  document.getElementById("silentSwitch").classList.toggle("on",silent);
+}
+updateSilent();
 
-async function openTube() {
-
-  openPage("tube");
-
-  await loadVideos();
+function toggleSilent(){
+  silent=!silent;
+  localStorage.setItem("pulseSilent",silent);
+  updateSilent();
+  showToast(silent?"Silent mode ON":"Silent mode OFF");
 }
 
-async function loadVideos() {
+function changeUsername(){
+  const name=prompt("New username:",username);
+  if(!name)return;
+  if(!validUsername(name))return;
 
-  const feed =
-    document.getElementById("tubeFeed");
+  username=name.trim();
+  localStorage.setItem("pulseUsername",username);
+  showToast("Username changed!");
+}
 
-  feed.innerHTML =
-    '<div class="empty-feed"><div>⏳<br><br>Loading videos...</div></div>';
+function changePhoneModel(){
+  const model=document.getElementById("phoneModel").value;
+  document.getElementById("phone").className="phone "+model;
+  localStorage.setItem("pulsePhoneModel",model);
+}
 
-  try {
+function setTheme(theme){
+  document.body.className=theme;
+  localStorage.setItem("pulseTheme",theme);
+}
 
-    const { data, error } =
-      await supabaseClient
-        .from("videos")
-        .select("*")
-        .order("created_at", {
-          ascending: false
-        });
+function saveProfile(){
+  const value=document.getElementById("profileAvatar").value.trim();
 
-    if (error) throw error;
+  if(value){
+    avatar=value;
+    localStorage.setItem("pulseAvatar",avatar);
+  }
 
-    if (!data || data.length === 0) {
+  showToast("Profile saved!");
+}
 
-      feed.innerHTML = `
-        <div class="empty-feed">
-          <div>
-            <div style="font-size:55px">🎬</div>
-            <h2>No videos yet</h2>
-            <p style="margin-top:8px">
-              Create the first PulseTube video!
-            </p>
-          </div>
-        </div>
-      `;
+/* ===============================
+CAMERA + VIDEO UPLOAD
+================================ */
 
-      return;
-    }
+let cameraStream=null;
+let mediaRecorder=null;
+let recordedChunks=[];
 
-    feed.innerHTML = "";
-
-    data.forEach(video => {
-
-      const card =
-        document.createElement("div");
-
-      card.className = "video-card";
-
-      card.innerHTML = `
-        <video
-          src="${escapeHTML(video.video_url)}"
-          playsinline
-          loop
-          preload="metadata"
-          muted>
-        </video>
-
-        <div class="video-bottom">
-          <div class="video-user">
-            ${escapeHTML(video.avatar || "🙂")}
-            ${escapeHTML(video.username)}
-          </div>
-
-          <div class="video-caption">
-            ${escapeHTML(video.caption || "")}
-          </div>
-        </div>
-
-        <div class="video-actions">
-
-          <button onclick="toggleLike(this)">
-            ❤️
-          </button>
-
-          <span class="like-count">0</span>
-
-          <button onclick="openComments('${video.id}')">
-            💬
-          </button>
-
-          <button onclick="toggleMute(this)">
-            🔇
-          </button>
-
-          <button onclick="toggleVideo(this)">
-            ▶️
-          </button>
-
-        </div>
-      `;
-
-      const vid =
-        card.querySelector("video");
-
-      card.addEventListener("click", e => {
-
-        if (
-          e.target.tagName === "BUTTON" ||
-          e.target.tagName === "INPUT"
-        ) return;
-
-        toggleVideo(
-          card.querySelector(
-            ".video-actions button:last-child"
-          )
-        );
-      });
-
-      feed.appendChild(card);
+async function startCamera(){
+  try{
+    cameraStream=await navigator.mediaDevices.getUserMedia({
+      video:true,
+      audio:true
     });
 
-    setupVideoObserver();
+    const preview=document.getElementById("cameraPreview");
+    preview.srcObject=cameraStream;
+    preview.style.display="block";
 
-  } catch (error) {
+    document.getElementById("cameraButton").style.display="none";
+    document.getElementById("recordButton").style.display="block";
 
+  }catch(error){
     console.error(error);
-
-    feed.innerHTML = `
-      <div class="empty-feed">
-        <div>
-          <div style="font-size:45px">⚠️</div>
-          <h2>Couldn't load videos</h2>
-          <p style="margin-top:8px">
-            ${escapeHTML(error.message)}
-          </p>
-        </div>
-      </div>
-    `;
+    showToast("Camera permission denied.");
   }
 }
 
+function stopCamera(){
+  if(cameraStream){
+    cameraStream.getTracks().forEach(track=>track.stop());
+    cameraStream=null;
+  }
 
-function setupVideoObserver() {
-
-  const videos =
-    document.querySelectorAll(
-      ".video-card video"
-    );
-
-  const observer =
-    new IntersectionObserver(
-      entries => {
-
-        entries.forEach(entry => {
-
-          const video = entry.target;
-
-          if (entry.isIntersecting) {
-
-            video.play()
-              .catch(() => {});
-
-          } else {
-
-            video.pause();
-          }
-
-        });
-
-      },
-      {
-        threshold: 0.65
-      }
-    );
-
-  videos.forEach(video =>
-    observer.observe(video)
-  );
-}
-
-
-function toggleVideo(button) {
-
-  const card =
-    button.closest(".video-card");
-
-  const video =
-    card.querySelector("video");
-
-  if (video.paused) {
-
-    video.play()
-      .catch(() => {});
-
-    button.textContent = "⏸️";
-
-  } else {
-
-    video.pause();
-
-    button.textContent = "▶️";
+  const preview=document.getElementById("cameraPreview");
+  if(preview){
+    preview.srcObject=null;
+    preview.style.display="none";
   }
 }
 
+function toggleRecording(){
 
-function toggleMute(button) {
-
-  const card =
-    button.closest(".video-card");
-
-  const video =
-    card.querySelector("video");
-
-  video.muted = !video.muted;
-
-  button.textContent =
-    video.muted ? "🔇" : "🔊";
-}
-
-
-function toggleLike(button) {
-
-  const card =
-    button.closest(".video-card");
-
-  const count =
-    card.querySelector(".like-count");
-
-  let number =
-    Number(count.textContent);
-
-  if (button.dataset.liked === "true") {
-
-    number--;
-
-    button.dataset.liked = "false";
-
-  } else {
-
-    number++;
-
-    button.dataset.liked = "true";
-  }
-
-  count.textContent =
-    Math.max(0, number);
-}
-
-
-/* =========================================================
-   COMMENTS
-========================================================= */
-
-function getComments(id) {
-
-  return JSON.parse(
-    localStorage.getItem(
-      "comments_" + id
-    ) || "[]"
-  );
-}
-
-function openComments(id) {
-
-  currentCommentVideo = id;
-
-  const box =
-    document.getElementById("commentsBox");
-
-  box.classList.add("show");
-
-  renderComments();
-}
-
-function closeComments() {
-
-  document.getElementById(
-    "commentsBox"
-  ).classList.remove("show");
-
-  currentCommentVideo = null;
-}
-
-function renderComments() {
-
-  const list =
-    document.getElementById("commentList");
-
-  if (!currentCommentVideo) return;
-
-  const comments =
-    getComments(currentCommentVideo);
-
-  if (!comments.length) {
-
-    list.innerHTML =
-      '<p style="color:#888">No comments yet.</p>';
-
-    return;
-  }
-
-  list.innerHTML =
-    comments.map(comment => `
-      <div class="comment">
-        <b>${escapeHTML(comment.username)}</b>
-        <br>
-        ${escapeHTML(comment.text)}
-      </div>
-    `).join("");
-}
-
-function addComment() {
-
-  if (!currentCommentVideo) return;
-
-  const input =
-    document.getElementById("commentInput");
-
-  const text =
-    input.value.trim();
-
-  if (!text) return;
-
-  const comments =
-    getComments(currentCommentVideo);
-
-  comments.push({
-    username,
-    text
-  });
-
-  localStorage.setItem(
-    "comments_" + currentCommentVideo,
-    JSON.stringify(comments)
-  );
-
-  input.value = "";
-
-  renderComments();
-}
-
-
-/* =========================================================
-   RECORDING
-========================================================= */
-
-let cameraStream = null;
-let mediaRecorder = null;
-let recordedChunks = [];
-let recordedBlob = null;
-
-async function startCamera() {
-
-  try {
-
-    cameraStream =
-      await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true
-      });
-
-    const preview =
-      document.getElementById("cameraPreview");
-
-    preview.srcObject =
-      cameraStream;
-
-    preview.style.display =
-      "block";
-
-    document.getElementById("cameraButton")
-      .textContent = "Camera Ready";
-
-    document.getElementById("recordButton")
-      .style.display = "block";
-
-  } catch (error) {
-
-    showToast(
-      "Camera permission was denied."
-    );
-
-    console.error(error);
-  }
-}
-
-function stopCamera() {
-
-  if (cameraStream) {
-
-    cameraStream
-      .getTracks()
-      .forEach(track => track.stop());
-
-    cameraStream = null;
-  }
-}
-
-function toggleRecording() {
-
-  const button =
-    document.getElementById("recordButton");
-
-  if (
-    mediaRecorder &&
-    mediaRecorder.state === "recording"
-  ) {
-
+  if(mediaRecorder && mediaRecorder.state==="recording"){
     mediaRecorder.stop();
-
-    button.textContent =
-      "🔴 Start Recording";
-
-    button.classList.remove(
-      "recording"
-    );
-
+    document.getElementById("recordButton").textContent="🔴 Start Recording";
     return;
   }
 
-  recordedChunks = [];
+  if(!cameraStream){
+    showToast("Start the camera first.");
+    return;
+  }
 
-  const options = {
-    mimeType: "video/webm"
+  recordedChunks=[];
+
+  let options={};
+
+  if(MediaRecorder.isTypeSupported("video/webm;codecs=vp9,opus")){
+    options={mimeType:"video/webm;codecs=vp9,opus"};
+  }else if(MediaRecorder.isTypeSupported("video/webm")){
+    options={mimeType:"video/webm"};
+  }
+
+  mediaRecorder=new MediaRecorder(cameraStream,options);
+
+  mediaRecorder.ondataavailable=e=>{
+    if(e.data.size>0)recordedChunks.push(e.data);
   };
 
-  try {
+  mediaRecorder.onstop=async()=>{
+    const blob=new Blob(recordedChunks,{type:"video/webm"});
+    document.getElementById("recordStatus").textContent="Uploading...";
 
-    mediaRecorder =
-      new MediaRecorder(
-        cameraStream,
-        options
-      );
-
-  } catch {
-
-    mediaRecorder =
-      new MediaRecorder(
-        cameraStream
-      );
-  }
-
-  mediaRecorder.ondataavailable =
-    event => {
-
-      if (event.data.size > 0) {
-        recordedChunks.push(event.data);
-      }
-    };
-
-  mediaRecorder.onstop =
-    async () => {
-
-      recordedBlob =
-        new Blob(
-          recordedChunks,
-          {
-            type: "video/webm"
-          }
-        );
-
-      document.getElementById(
-        "recordStatus"
-      ).textContent =
-        "Recording finished! Uploading...";
-
-      await uploadBlob(recordedBlob);
-    };
+    await uploadBlob(
+      blob,
+      document.getElementById("videoCaption").value
+    );
+  };
 
   mediaRecorder.start();
 
-  button.textContent =
-    "⏹ Stop Recording";
-
-  button.classList.add(
-    "recording"
-  );
-
-  document.getElementById(
-    "recordStatus"
-  ).textContent =
-    "Recording...";
+  document.getElementById("recordButton").textContent="⏹ Stop Recording";
+  document.getElementById("recordStatus").textContent="Recording...";
 }
 
+async function uploadSelectedVideo(){
 
-async function uploadSelectedVideo() {
+  const file=document.getElementById("videoFile").files[0];
 
-  const file =
-    document.getElementById("videoFile")
-      .files[0];
-
-  if (!file) {
-
+  if(!file){
     showToast("Choose a video first.");
-
     return;
   }
 
-  if (file.size > 50 * 1024 * 1024) {
-
-    showToast(
-      "Video must be under 50 MB."
-    );
-
+  if(file.size>50*1024*1024){
+    showToast("Video must be under 50 MB.");
     return;
   }
 
   await uploadBlob(
     file,
-    document.getElementById(
-      "videoCaption"
-    ).value
+    document.getElementById("videoCaption").value
   );
 }
 
+async function uploadBlob(blob,caption=""){
 
-async function uploadBlob(blob, caption = "") {
+  try{
 
-  try {
-
-    if (!username) {
-
-      showToast(
-        "Choose a username first."
-      );
-
+    if(!username){
+      showToast("Choose a username first.");
       return;
     }
 
     showToast("Uploading video...");
 
-    const extension =
-      blob.type.includes("mp4")
-        ? "mp4"
-        : "webm";
+    const ext=blob.type.includes("mp4")?"mp4":"webm";
 
-    const fileName =
-      Date.now() +
-      "_" +
-      Math.random()
-        .toString(36)
-        .slice(2) +
-      "." +
-      extension;
+    const safeUser=username.replace(/[^a-zA-Z0-9_-]/g,"_");
 
-    const filePath =
-      username.replace(
-        /[^a-zA-Z0-9_-]/g,
-        "_"
-      ) +
-      "/" +
-      fileName;
+    const path=
+      safeUser+"/"+
+      Date.now()+"_"+
+      Math.random().toString(36).slice(2)+
+      "."+ext;
 
-    const { error: uploadError } =
-      await supabaseClient
-        .storage
-        .from(VIDEO_BUCKET)
-        .upload(
-          filePath,
-          blob,
-          {
-            contentType:
-              blob.type ||
-              "video/webm",
-            upsert: false
-          }
-        );
+    const {error:uploadError}=await supabaseClient
+      .storage
+      .from(VIDEO_BUCKET)
+      .upload(path,blob,{
+        contentType:blob.type||"video/webm",
+        upsert:false
+      });
 
-    if (uploadError)
-      throw uploadError;
+    if(uploadError)throw uploadError;
 
-    const { data: publicData } =
-      supabaseClient
-        .storage
-        .from(VIDEO_BUCKET)
-        .getPublicUrl(filePath);
+    const {data}=supabaseClient
+      .storage
+      .from(VIDEO_BUCKET)
+      .getPublicUrl(path);
 
-    const publicUrl =
-      publicData.publicUrl;
+    const {error:dbError}=await supabaseClient
+      .from("videos")
+      .insert({
+        username:username,
+        avatar:avatar,
+        caption:caption,
+        video_url:data.publicUrl
+      });
 
-    const { error: dbError } =
-      await supabaseClient
-        .from("videos")
-        .insert({
-          username,
-          avatar,
-          caption,
-          video_url: publicUrl
-        });
+    if(dbError)throw dbError;
 
-    if (dbError)
-      throw dbError;
-
-    document.getElementById(
-      "recordStatus"
-    ).textContent =
+    document.getElementById("recordStatus").textContent=
       "Uploaded successfully! 🎉";
 
-    showToast(
-      "Video uploaded! 🎉"
-    );
+    document.getElementById("videoFile").value="";
+    document.getElementById("videoCaption").value="";
 
-    document.getElementById(
-      "videoFile"
-    ).value = "";
+    showToast("Video uploaded! 🎉");
 
-    document.getElementById(
-      "videoCaption"
-    ).value = "";
+    setTimeout(openTube,700);
 
-    setTimeout(() => {
-      openTube();
-    }, 1000);
-
-  } catch (error) {
-
+  }catch(error){
     console.error(error);
-
-    showToast(
-      "Upload failed: " +
-      error.message
-    );
+    showToast("Upload failed.");
   }
 }
 
+/* ===============================
+PULSETUBE
+================================ */
 
-/* =========================================================
-   GAMES
-========================================================= */
+let currentCommentVideo=null;
 
-let tapScore = 0;
-
-function tapGame() {
-
-  tapScore++;
-
-  document.getElementById(
-    "tapScore"
-  ).textContent =
-    "Score: " + tapScore;
+async function openTube(){
+  openPage("tube");
+  await loadVideos();
 }
 
-
-let targetScore = 0;
-
-function targetGame() {
-
-  targetScore +=
-    Math.floor(
-      Math.random() * 10
-    ) + 1;
-
-  document.getElementById(
-    "targetScore"
-  ).textContent =
-    "Score: " + targetScore;
-}
-
-
-function rollDice() {
-
-  const number =
-    Math.floor(
-      Math.random() * 6
-    ) + 1;
-
-  document.getElementById(
-    "luckyResult"
-  ).textContent =
-    "You rolled: " + number + " 🎲";
-}
-
-
-function newMemory() {
-
-  const number =
-    Math.floor(
-      1000 +
-      Math.random() * 9000
-    );
-
-  const element =
-    document.getElementById(
-      "memoryText"
-    );
-
-  element.textContent =
-    "Remember: " + number;
-
-  setTimeout(() => {
-
-    element.textContent =
-      "???";
-
-  }, 3000);
-}
-
-
-/* =========================================================
-   FLAPPY FLOP
-========================================================= */
-
-let flappyRunning = false;
-let flappyBird = {};
-let flappyPipe = {};
-let flappyScore = 0;
-let flappyFrame;
-
-function startFlappy() {
-
-  const canvas =
-    document.getElementById(
-      "gameCanvas"
-    );
-
-  canvas.style.display =
-    "block";
-
-  const ctx =
-    canvas.getContext("2d");
-
-  flappyRunning = true;
-
-  flappyBird = {
-    x: 70,
-    y: 230,
-    velocity: 0
-  };
-
-  flappyPipe = {
-    x: 360,
-    gapY: 220
-  };
-
-  flappyScore = 0;
-
-  canvas.onclick = () => {
-
-    if (!flappyRunning) return;
-
-    flappyBird.velocity = -7;
-  };
-
-  function loop() {
-
-    if (!flappyRunning) return;
-
-    ctx.clearRect(
-      0,
-      0,
-      canvas.width,
-      canvas.height
-    );
-
-    flappyBird.velocity += .35;
-
-    flappyBird.y +=
-      flappyBird.velocity;
-
-    flappyPipe.x -= 3;
-
-    if (flappyPipe.x < -70) {
-
-      flappyPipe.x = 360;
-
-      flappyPipe.gapY =
-        120 +
-        Math.random() * 230;
-
-      flappyScore++;
-    }
-
-    ctx.fillStyle =
-      "#77b5ff";
-
-    ctx.fillRect(
-      0,
-      0,
-      canvas.width,
-      canvas.height
-    );
-
-    ctx.fillStyle =
-      "#65c466";
-
-    ctx.fillRect(
-      flappyPipe.x,
-      0,
-      55,
-      flappyPipe.gapY - 80
-    );
-
-    ctx.fillRect(
-      flappyPipe.x,
-      flappyPipe.gapY + 80,
-      55,
-      canvas.height
-    );
-
-    ctx.fillStyle =
-      "#ffd84d";
-
-    ctx.beginPath();
-
-    ctx.arc(
-      flappyBird.x,
-      flappyBird.y,
-      16,
-      0,
-      Math.PI * 2
-    );
-
-    ctx.fill();
-
-    ctx.fillStyle =
-      "black";
-
-    ctx.font =
-      "20px Arial";
-
-    ctx.fillText(
-      "Score: " + flappyScore,
-      15,
-      30
-    );
-
-    const hitPipe =
-      flappyBird.x + 16 >
-      flappyPipe.x &&
-      flappyBird.x - 16 <
-      flappyPipe.x + 55 &&
-      (
-        flappyBird.y - 16 <
-        flappyPipe.gapY - 80 ||
-        flappyBird.y + 16 >
-        flappyPipe.gapY + 80
-      );
-
-    const hitGround =
-      flappyBird.y + 16 >
-      canvas.height ||
-      flappyBird.y - 16 < 0;
-
-    if (hitPipe || hitGround) {
-
-      flappyRunning = false;
-
-      ctx.fillStyle =
-        "rgba(0,0,0,.7)";
-
-      ctx.fillRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
-
-      ctx.fillStyle =
-        "white";
-
-      ctx.font =
-        "30px Arial";
-
-      ctx.textAlign =
-        "center";
-
-      ctx.fillText(
-        "GAME OVER",
-        canvas.width / 2,
-        230
-      );
-
-      ctx.font =
-        "18px Arial";
-
-      ctx.fillText(
-        "Score: " + flappyScore,
-        canvas.width / 2,
-        265
-      );
-
-      ctx.textAlign =
-        "left";
-
+async function loadVideos(){
+
+  const feed=document.getElementById("tubeFeed");
+
+  feed.innerHTML=`
+  <div class="empty-feed">
+    <div>⏳<br><br>Loading...</div>
+  </div>`;
+
+  try{
+
+    const {data,error}=await supabaseClient
+      .from("videos")
+      .select("*")
+      .order("created_at",{ascending:false});
+
+    if(error)throw error;
+
+    if(!data||!data.length){
+      feed.innerHTML=`
+      <div class="empty-feed">
+        <div>
+          <div style="font-size:55px">🎬</div>
+          <h2>No videos yet</h2>
+          <p style="margin-top:8px">Create the first one!</p>
+        </div>
+      </div>`;
       return;
     }
 
-    flappyFrame =
-      requestAnimationFrame(loop);
+    feed.innerHTML="";
+
+    data.forEach(video=>{
+
+      const card=document.createElement("div");
+      card.className="video-card";
+
+      card.innerHTML=`
+      <video
+        src="${escapeHTML(video.video_url)}"
+        playsinline
+        loop
+        muted
+        preload="metadata"></video>
+
+      <div class="video-bottom">
+        <div class="video-user">
+          ${escapeHTML(video.avatar||"🙂")}
+          ${escapeHTML(video.username)}
+        </div>
+        <div class="video-caption">
+          ${escapeHTML(video.caption||"")}
+        </div>
+      </div>
+
+      <div class="video-actions">
+        <button onclick="toggleLike(this)">❤️</button>
+        <span class="like-count">0</span>
+
+        <button onclick="openComments('${video.id}')">💬</button>
+
+        <button onclick="toggleMute(this)">🔇</button>
+
+        <button onclick="toggleVideo(this)">▶️</button>
+      </div>`;
+
+      feed.appendChild(card);
+    });
+
+    const observer=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        const video=entry.target;
+        if(entry.isIntersecting){
+          video.play().catch(()=>{});
+        }else{
+          video.pause();
+        }
+      });
+    },{threshold:.65});
+
+    document.querySelectorAll(".video-card video")
+      .forEach(video=>observer.observe(video));
+
+  }catch(error){
+
+    console.error(error);
+
+    feed.innerHTML=`
+    <div class="empty-feed">
+      <div>
+        <div style="font-size:45px">⚠️</div>
+        <h2>Couldn't load videos</h2>
+      </div>
+    </div>`;
+  }
+}
+
+function toggleVideo(button){
+
+  const card=button.closest(".video-card");
+  const video=card.querySelector("video");
+
+  if(video.paused){
+    video.play().catch(()=>{});
+    button.textContent="⏸️";
+  }else{
+    video.pause();
+    button.textContent="▶️";
+  }
+}
+
+function toggleMute(button){
+
+  const card=button.closest(".video-card");
+  const video=card.querySelector("video");
+
+  video.muted=!video.muted;
+  button.textContent=video.muted?"🔇":"🔊";
+}
+
+function toggleLike(button){
+
+  const count=button.parentElement.querySelector(".like-count");
+  let value=Number(count.textContent)||0;
+
+  if(button.dataset.liked==="true"){
+    value--;
+    button.dataset.liked="false";
+  }else{
+    value++;
+    button.dataset.liked="true";
   }
 
-  cancelAnimationFrame(flappyFrame);
-
-  loop();
+  count.textContent=Math.max(0,value);
 }
 
+/* ===============================
+COMMENTS
+================================ */
 
-/* =========================================================
-   SECURITY / HTML ESCAPING
-========================================================= */
-
-function escapeHTML(value) {
-
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+function getComments(id){
+  return JSON.parse(localStorage.getItem("comments_"+id)||"[]");
 }
 
-
-/* =========================================================
-   LOAD SETTINGS
-========================================================= */
-
-const savedTheme =
-  localStorage.getItem("pulseTheme");
-
-if (savedTheme) {
-  document.body.className =
-    savedTheme;
+function openComments(id){
+  currentCommentVideo=id;
+  document.getElementById("commentsBox").classList.add("show");
+  renderComments();
 }
 
-const savedModel =
-  localStorage.getItem(
-    "pulsePhoneModel"
+function closeComments(){
+  document.getElementById("commentsBox").classList.remove("show");
+  currentCommentVideo=null;
+}
+
+function renderComments(){
+
+  const list=document.getElementById("commentList");
+
+  const comments=getComments(currentCommentVideo);
+
+  if(!comments.length){
+    list.innerHTML='<p style="color:#888">No comments yet.</p>';
+    return;
+  }
+
+  list.innerHTML=comments.map(c=>`
+    <div class="comment">
+      <b>${escapeHTML(c.username)}</b><br>
+      ${escapeHTML(c.text)}
+    </div>
+  `).join("");
+}
+
+function addComment(){
+
+  if(!currentCommentVideo)return;
+
+  const input=document.getElementById("commentInput");
+  const text=input.value.trim();
+
+  if(!text)return;
+
+  const comments=getComments(currentCommentVideo);
+
+  comments.push({
+    username:username,
+    text:text
+  });
+
+  localStorage.setItem(
+    "comments_"+currentCommentVideo,
+    JSON.stringify(comments)
   );
 
-if (savedModel) {
-
-  document.getElementById(
-    "phoneModel"
-  ).value = savedModel;
-
-  document.getElementById(
-    "phone"
-  ).className =
-    "phone " + savedModel;
+  input.value="";
+  renderComments();
 }
 
-document.getElementById(
-  "profileAvatar"
-).value = avatar;
+/* ===============================
+GAME ENGINE
+================================ */
 
+const canvas=document.getElementById("gameCanvas");
+const ctx=canvas.getContext("2d");
 
-/* =========================================================
-   STARTUP
-========================================================= */
+let currentGame=null;
+let animationId=null;
+let gameRunning=false;
 
-if (username) {
+let flappy={};
+let target={};
+let neon={};
+let memory={};
+let meteor={};
 
-  document.getElementById(
-    "setup"
-  ).style.display = "none";
+function startGame(game){
 
+  currentGame=game;
+  gameRunning=true;
+
+  document.getElementById("games").classList.remove("active");
+  document.getElementById("gamePlay").classList.add("active");
+
+  document.getElementById("gameMessage").classList.remove("show");
+
+  if(game==="flappy"){
+    document.getElementById("gameTitle").textContent="🐤 Flappy Flop";
+    document.getElementById("gameInfo").textContent="Click / tap to flap";
+    initFlappy();
+  }
+
+  if(game==="target"){
+    document.getElementById("gameTitle").textContent="🎯 Target Dummy";
+    document.getElementById("gameInfo").textContent="CLICK THE HEAD • Body shots don't count";
+    initTarget();
+  }
+
+  if(game==="neon"){
+    document.getElementById("gameTitle").textContent="⚡ Neon Catch";
+    document.getElementById("gameInfo").textContent="Click the glowing target before it disappears";
+    initNeon();
+  }
+
+  if(game==="memory"){
+    document.getElementById("gameTitle").textContent="🧠 Memory Match";
+    document.getElementById("gameInfo").textContent="Find every matching pair";
+    initMemory();
+  }
+
+  if(game==="meteor"){
+    document.getElementById("gameTitle").textContent="☄️ Meteor Dodge";
+    document.getElementById("gameInfo").textContent="Move with mouse / finger • Survive!";
+    initMeteor();
+  }
 }
 
+function restartGame(){
+  if(!currentGame)return;
+  startGame(currentGame);
+}
+
+function stopGame(){
+
+  gameRunning=false;
+  currentGame=null;
+
+  if(animationId){
+    cancelAnimationFrame(animationId);
+    animationId=null;
+  }
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  document.getElementById("gameMessage").classList.remove("show");
+}
+
+function gameOver(title,text){
+
+  gameRunning=false;
+
+  if(animationId){
+    cancelAnimationFrame(animationId);
+    animationId=null;
+  }
+
+  document.getElementById("gameOverTitle").textContent=title;
+  document.getElementById("gameOverText").textContent=text;
+  document.getElementById("gameMessage").classList.add("show");
+}
+
+/* ===============================
+FLAPPY FLOP
+================================ */
+
+function initFlappy(){
+
+  flappy={
+    x:70,
+    y:230,
+    vel:0,
+    gravity:.42,
+    flap:-7.5,
+    pipeX:390,
+    gapY:260,
+    gap:145,
+    score:0,
+    passed:false
+  };
+
+  canvas.onclick=()=>{
+    if(gameRunning)flappy.vel=flappy.flap;
+  };
+
+  canvas.ontouchstart=e=>{
+    e.preventDefault();
+    if(gameRunning)flappy.vel=flappy.flap;
+  };
+
+  runFlappy();
+}
+
+function runFlappy(){
+
+  if(!gameRunning)return;
+
+  ctx.fillStyle="#76b7ff";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  /* clouds */
+  ctx.fillStyle="#ffffff55";
+  for(let i=0;i<5;i++){
+    const x=(i*95-(Date.now()/40)%450+450)%450;
+    ctx.beginPath();
+    ctx.arc(x,85+(i%2)*60,18,0,Math.PI*2);
+    ctx.arc(x+22,85+(i%2)*60,25,0,Math.PI*2);
+    ctx.arc(x+50,85+(i%2)*60,17,0,Math.PI*2);
+    ctx.fill();
+  }
+
+  flappy.vel+=flappy.gravity;
+  flappy.y+=flappy.vel;
+
+  flappy.pipeX-=3;
+
+  if(flappy.pipeX<-65){
+    flappy.pipeX=canvas.width;
+    flappy.gapY=150+Math.random()*300;
+    flappy.passed=false;
+  }
+
+  if(!flappy.passed && flappy.pipeX+65<flappy.x){
+    flappy.score++;
+    flappy.passed=true;
+  }
+
+  /* pipes */
+  ctx.fillStyle="#53c653";
+  ctx.fillRect(flappy.pipeX,0,65,flappy.gapY-flappy.gap/2);
+  ctx.fillRect(
+    flappy.pipeX,
+    flappy.gapY+flappy.gap/2,
+    65,
+    canvas.height
+  );
+
+  /* bird */
+  ctx.fillStyle="#ffe35a";
+  ctx.beginPath();
+  ctx.arc(flappy.x,flappy.y,17,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.fillStyle="#fff";
+  ctx.beginPath();
+  ctx.arc(flappy.x+8,flappy.y-5,6,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.fillStyle="#111";
+  ctx.beginPath();
+  ctx.arc(flappy.x+10,flappy.y-5,2.5,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.fillStyle="#111";
+  ctx.font="bold 22px Arial";
+  ctx.fillText("Score: "+flappy.score,15,30);
+
+  const hitPipe=
+    flappy.x+14>flappy.pipeX &&
+    flappy.x-14<flappy.pipeX+65 &&
+    (
+      flappy.y-14<flappy.gapY-flappy.gap/2 ||
+      flappy.y+14>flappy.gapY+flappy.gap/2
+    );
+
+  if(
+    hitPipe ||
+    flappy.y<0 ||
+    flappy.y>canvas.height
+  ){
+    gameOver("💥 FLOP!","Score: "+flappy.score);
+    return;
+  }
+
+  animationId=requestAnimationFrame(runFlappy);
+}
+
+/* ===============================
+TARGET DUMMY
+================================ */
+
+function newDummy(){
+
+  target.x=65+Math.random()*230;
+  target.y=150+Math.random()*350;
+  target.headR=26;
+  target.bodyW=55;
+  target.bodyH=95;
+}
+
+function initTarget(){
+
+  target={
+    score:0,
+    x:170,
+    y:250,
+    headR:26,
+    bodyW:55,
+    bodyH:95,
+    time:30
+  };
+
+  newDummy();
+
+  canvas.onclick=e=>{
+    if(!gameRunning)return;
+
+    const rect=canvas.getBoundingClientRect();
+
+    const x=(e.clientX-rect.left)*(canvas.width/rect.width);
+    const y=(e.clientY-rect.top)*(canvas.height/rect.height);
+
+    const dist=Math.hypot(
+      x-target.x,
+      y-target.y
+    );
+
+    /* HEAD ONLY */
+    if(dist<=target.headR){
+
+      target.score++;
+
+      showToast("HEADSHOT! 🎯");
+
+      newDummy();
+
+    }else{
+      showToast("Body shot! ❌");
+    }
+  };
+
+  canvas.ontouchstart=e=>{
+    e.preventDefault();
+
+    const t=e.touches[0];
+    const rect=canvas.getBoundingClientRect();
+
+    const x=(t.clientX-rect.left)*(canvas.width/rect.width);
+    const y=(t.clientY-rect.top)*(canvas.height/rect.height);
+
+    const dist=Math.hypot(
+      x-target.x,
+      y-target.y
+    );
+
+    if(dist<=target.headR){
+      target.score++;
+      showToast("HEADSHOT! 🎯");
+      newDummy();
+    }else{
+      showToast("Body shot! ❌");
+    }
+  };
+
+  target.last=performance.now();
+
+  runTarget();
+}
+
+function runTarget(){
+
+  if(!gameRunning)return;
+
+  const now=performance.now();
+
+  if(now-target.last>=1000){
+    target.time--;
+    target.last=now;
+  }
+
+  ctx.fillStyle="#151922";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  /* grid */
+  ctx.strokeStyle="#ffffff08";
+  for(let x=0;x<canvas.width;x+=30){
+    ctx.beginPath();
+    ctx.moveTo(x,0);
+    ctx.lineTo(x,canvas.height);
+    ctx.stroke();
+  }
+  for(let y=0;y<canvas.height;y+=30){
+    ctx.beginPath();
+    ctx.moveTo(0,y);
+    ctx.lineTo(canvas.width,y);
+    ctx.stroke();
+  }
+
+  /* ground */
+  ctx.fillStyle="#202735";
+  ctx.fillRect(0,550,canvas.width,100);
+
+  /* dummy body */
+  ctx.fillStyle="#d94a4a";
+  ctx.fillRect(
+    target.x-target.bodyW/2,
+    target.y+target.headR-3,
+    target.bodyW,
+    target.bodyH
+  );
+
+  /* arms */
+  ctx.strokeStyle="#d94a4a";
+  ctx.lineWidth=17;
+  ctx.beginPath();
+  ctx.moveTo(target.x-26,target.y+65);
+  ctx.lineTo(target.x-70,target.y+110);
+  ctx.moveTo(target.x+26,target.y+65);
+  ctx.lineTo(target.x+70,target.y+110);
+  ctx.stroke();
+
+  /* head */
+  ctx.fillStyle="#ffd0a8";
+  ctx.beginPath();
+  ctx.arc(
+    target.x,
+    target.y,
+    target.headR,
+    0,
+    Math.PI*2
+  );
+  ctx.fill();
+
+  /* hair */
+  ctx.fillStyle="#282828";
+  ctx.beginPath();
+  ctx.arc(target.x,target.y-7,25,Math.PI,Math.PI*2);
+  ctx.fill();
+
+  /* eyes */
+  ctx.fillStyle="#111";
+  ctx.beginPath();
+  ctx.arc(target.x-9,target.y-2,3,0,Math.PI*2);
+  ctx.arc(target.x+9,target.y-2,3,0,Math.PI*2);
+  ctx.fill();
+
+  /* crosshair around head */
+  ctx.strokeStyle="#ff455e";
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  ctx.arc(target.x,target.y,target.headR+9,0,Math.PI*2);
+  ctx.stroke();
+
+  ctx.fillStyle="#fff";
+  ctx.font="bold 21px Arial";
+  ctx.fillText("Kills: "+target.score,15,30);
+  ctx.fillText("Time: "+target.time,255,30);
+
+  if(target.time<=0){
+    gameOver("🎯 TIME!","Dummy kills: "+target.score);
+    return;
+  }
+
+  animationId=requestAnimationFrame(runTarget);
+}
+
+/* ===============================
+NEON CATCH
+================================ */
+
+function initNeon(){
+
+  neon={
+    score:0,
+    x:180,
+    y:300,
+    radius:28,
+    life:1.4,
+    lastSpawn:performance.now(),
+    lastHit:performance.now()
+  };
+
+  spawnNeon();
+
+  canvas.onclick=e=>{
+    if(!gameRunning)return;
+
+    const rect=canvas.getBoundingClientRect();
+
+    const x=(e.clientX-rect.left)*(canvas.width/rect.width);
+    const y=(e.clientY-rect.top)*(canvas.height/rect.height);
+
+    const hit=Math.hypot(
+      x-neon.x,
+      y-neon.y
+    );
+
+    if(hit<=neon.radius+8){
+      neon.score++;
+      spawnNeon();
+    }
+  };
+
+  canvas.ontouchstart=e=>{
+    e.preventDefault();
+
+    const t=e.touches[0];
+    const rect=canvas.getBoundingClientRect();
+
+    const x=(t.clientX-rect.left)*(canvas.width/rect.width);
+    const y=(t.clientY-rect.top)*(canvas.height/rect.height);
+
+    if(Math.hypot(x-neon.x,y-neon.y)<=neon.radius+8){
+      neon.score++;
+      spawnNeon();
+    }
+  };
+
+  runNeon();
+}
+
+function spawnNeon(){
+
+  neon.x=35+Math.random()*(canvas.width-70);
+  neon.y=90+Math.random()*(canvas.height-150);
+  neon.radius=22+Math.random()*15;
+  neon.life=1.2+Math.random()*.5;
+  neon.lastSpawn=performance.now();
+}
+
+function runNeon(){
+
+  if(!gameRunning)return;
+
+  const now=performance.now();
+  const elapsed=(now-neon.lastSpawn)/1000;
+  const remain=Math.max(0,neon.life-elapsed);
+
+  ctx.fillStyle="#070912";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  /* stars */
+  for(let i=0;i<45;i++){
+    ctx.fillStyle="#ffffff22";
+    ctx.fillRect(
+      (i*83)%canvas.width,
+      (i*137)%canvas.height,
+      2,
+      2
+    );
+  }
+
+  const pulse=1+Math.sin(now/90)*.15;
+
+  ctx.shadowBlur=30;
+  ctx.shadowColor="#54d9ff";
+  ctx.fillStyle="#54d9ff";
+  ctx.beginPath();
+  ctx.arc(
+    neon.x,
+    neon.y,
+    neon.radius*pulse,
+    0,
+    Math.PI*2
+  );
+  ctx.fill();
+  ctx.shadowBlur=0;
+
+  ctx.fillStyle="#fff";
+  ctx.font="bold 21px Arial";
+  ctx.fillText("Score: "+neon.score,15,30);
+
+  ctx.font="14px Arial";
+  ctx.fillText("Target: "+remain.toFixed(1),15,53);
+
+  if(remain<=0){
+    gameOver("⚡ TOO SLOW!","Score: "+neon.score);
+    return;
+  }
+
+  animationId=requestAnimationFrame(runNeon);
+}
+
+/* ===============================
+MEMORY MATCH
+================================ */
+
+function initMemory(){
+
+  memory={
+    cards:[],
+    open:[],
+    matched:[],
+    moves:0
+  };
+
+  const values=["🐺","🦊","🐸","🐱","🐼","🐵","🐧","🦄"];
+  memory.cards=[...values,...values];
+
+  memory.cards.sort(()=>Math.random()-.5);
+
+  canvas.onclick=memoryClick;
+
+  canvas.ontouchstart=e=>{
+    e.preventDefault();
+    const t=e.touches[0];
+    memoryHandlePointer(t.clientX,t.clientY);
+  };
+
+  runMemory();
+}
+
+function memoryHandlePointer(clientX,clientY){
+
+  const rect=canvas.getBoundingClientRect();
+
+  const x=(clientX-rect.left)*(canvas.width/rect.width);
+  const y=(clientY-rect.top)*(canvas.height/rect.height);
+
+  memorySelect(x,y);
+}
+
+function memoryClick(e){
+  const rect=canvas.getBoundingClientRect();
+
+  const x=(e.clientX-rect.left)*(canvas.width/rect.width);
+  const y=(e.clientY-rect.top)*(canvas.height/rect.height);
+
+  memorySelect(x,y);
+}
+
+function memorySelect(x,y){
+
+  if(!gameRunning)return;
+  if(memory.open.length>=2)return;
+
+  const startX=25;
+  const startY=85;
+  const gap=10;
+  const cardW=72;
+  const cardH=105;
+
+  const col=Math.floor((x-startX)/(cardW+gap));
+  const row=Math.floor((y-startY)/(cardH+gap));
+
+  if(col<0||col>3||row<0||row>3)return;
+
+  const index=row*4+col;
+
+  if(memory.matched.includes(index)||memory.open.includes(index))return;
+
+  memory.open.push(index);
+
+  if(memory.open.length===2){
+
+    memory.moves++;
+
+    const [a,b]=memory.open;
+
+    if(memory.cards[a]===memory.cards[b]){
+
+      memory.matched.push(a,b);
+      memory.open=[];
+
+      if(memory.matched.length===16){
+
+        setTimeout(()=>{
+          gameOver(
+            "🧠 PERFECT!",
+            "You won in "+memory.moves+" moves!"
+          );
+        },300);
+
+        return;
+      }
+
+    }else{
+
+      setTimeout(()=>{
+        memory.open=[];
+      },650);
+    }
+  }
+}
+
+function runMemory(){
+
+  if(!gameRunning)return;
+
+  ctx.fillStyle="#121722";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  ctx.fillStyle="#fff";
+  ctx.font="bold 20px Arial";
+  ctx.fillText("Moves: "+memory.moves,15,32);
+
+  const startX=25;
+  const startY=85;
+  const gap=10;
+  const cardW=72;
+  const cardH=105;
+
+  for(let i=0;i<16;i++){
+
+    const col=i%4;
+    const row=Math.floor(i/4);
+
+    const x=startX+col*(cardW+gap);
+    const y=startY+row*(cardH+gap);
+
+    const visible=
+      memory.open.includes(i)||
+      memory.matched.includes(i);
+
+    ctx.fillStyle=
+      visible ? "#3946a8" : "#242a36";
+
+    ctx.beginPath();
+    ctx.roundRect(x,y,cardW,cardH,13);
+    ctx.fill();
+
+    if(visible){
+
+      ctx.fillStyle="#fff";
+      ctx.font="35px Arial";
+      ctx.textAlign="center";
+      ctx.fillText(
+        memory.cards[i],
+        x+cardW/2,
+        y+66
+      );
+      ctx.textAlign="left";
+
+    }else{
+
+      ctx.fillStyle="#555e72";
+      ctx.font="28px Arial";
+      ctx.textAlign="center";
+      ctx.fillText("?",x+cardW/2,y+65);
+      ctx.textAlign="left";
+    }
+  }
+
+  animationId=requestAnimationFrame(runMemory);
+}
+
+/* ===============================
+METEOR DODGE
+================================ */
+
+function initMeteor(){
+
+  meteor={
+    playerX:180,
+    playerY:560,
+    meteors:[],
+    score:0,
+    start:performance.now(),
+    lastSpawn:performance.now()
+  };
+
+  canvas.onpointermove=e=>{
+    if(!gameRunning)return;
+
+    const rect=canvas.getBoundingClientRect();
+
+    meteor.playerX=
+      (e.clientX-rect.left)*(canvas.width/rect.width);
+  };
+
+  canvas.ontouchmove=e=>{
+    e.preventDefault();
+
+    const t=e.touches[0];
+    const rect=canvas.getBoundingClientRect();
+
+    meteor.playerX=
+      (t.clientX-rect.left)*(canvas.width/rect.width);
+  };
+
+  runMeteor();
+}
+
+function runMeteor(){
+
+  if(!gameRunning)return;
+
+  const now=performance.now();
+  const elapsed=(now-meteor.start)/1000;
+
+  ctx.fillStyle="#090b12";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  /* stars */
+  for(let i=0;i<55;i++){
+    const y=(i*73+now/18)%canvas.height;
+    const x=(i*131)%canvas.width;
+
+    ctx.fillStyle="#ffffff44";
+    ctx.fillRect(x,y,2,2);
+  }
+
+  if(now-meteor.lastSpawn>Math.max(220,650-elapsed*12)){
+
+    meteor.meteors.push({
+      x:15+Math.random()*(canvas.width-30),
+      y:-30,
+      r:10+Math.random()*15,
+      speed:3+Math.random()*3+elapsed*.08
+    });
+
+    meteor.lastSpawn=now;
+  }
+
+  for(let i=meteor.meteors.length-1;i>=0;i--){
+
+    const m=meteor.meteors[i];
+
+    m.y+=m.speed;
+
+    ctx.fillStyle="#ff754c";
+    ctx.beginPath();
+    ctx.arc(m.x,m.y,m.r,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.fillStyle="#ffcf66";
+    ctx.beginPath();
+    ctx.arc(m.x-4,m.y-5,m.r*.35,0,Math.PI*2);
+    ctx.fill();
+
+    if(m.y>canvas.height+40){
+      meteor.meteors.splice(i,1);
+      continue;
+    }
+
+    const dist=Math.hypot(
+      m.x-meteor.playerX,
+      m.y-meteor.playerY
+    );
+
+    if(dist<m.r+19){
+
+      gameOver(
+        "☄️ CRASH!",
+        "Survived "+elapsed.toFixed(1)+" seconds"
+      );
+
+      return;
+    }
+  }
+
+  /* ship */
+  ctx.fillStyle="#5ee7ff";
+  ctx.beginPath();
+  ctx.moveTo(meteor.playerX,meteor.playerY-22);
+  ctx.lineTo(meteor.playerX-20,meteor.playerY+18);
+  ctx.lineTo(meteor.playerX,meteor.playerY+10);
+  ctx.lineTo(meteor.playerX+20,meteor.playerY+18);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle="#fff";
+  ctx.beginPath();
+  ctx.arc(
+    meteor.playerX,
+    meteor.playerY-1,
+    5,
+    0,
+    Math.PI*2
+  );
+  ctx.fill();
+
+  ctx.fillStyle="#fff";
+  ctx.font="bold 20px Arial";
+  ctx.fillText(
+    "Time: "+elapsed.toFixed(1),
+    15,
+    30
+  );
+
+  animationId=requestAnimationFrame(runMeteor);
+}
+
+/* ===============================
+ESCAPE
+================================ */
+
+function escapeHTML(v){
+  return String(v)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+/* ===============================
+LOAD SETTINGS
+================================ */
+
+const savedTheme=localStorage.getItem("pulseTheme");
+if(savedTheme)document.body.className=savedTheme;
+
+const savedModel=localStorage.getItem("pulsePhoneModel");
+if(savedModel){
+  document.getElementById("phoneModel").value=savedModel;
+  document.getElementById("phone").className="phone "+savedModel;
+}
+
+document.getElementById("profileAvatar").value=avatar;
+
+if(username){
+  document.getElementById("setup").style.display="none";
+}
 </script>
 
 </body>
